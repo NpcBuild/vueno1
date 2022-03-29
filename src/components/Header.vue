@@ -1,9 +1,26 @@
 <template>
-  <el-carousel indicator-position="outside">
-    <el-carousel-item v-for="item in 4" :key="item">
-      <h3>{{ item }}</h3>
-    </el-carousel-item>
-  </el-carousel>
+  <div>
+    <el-dropdown @command="handleCommand">
+      <span class="el-dropdown-link">
+<!--        下拉菜单<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
+        <el-avatar size="large" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+      </span>
+      <el-dropdown-menu slot="dropdown">
+        <el-dropdown-item command="login">登录</el-dropdown-item>
+        <el-dropdown-item command="b">狮子头</el-dropdown-item>
+        <el-dropdown-item command="about">关于</el-dropdown-item>
+        <el-dropdown-item command="logOut" divided>退出</el-dropdown-item>
+      </el-dropdown-menu>
+    </el-dropdown>
+    <el-carousel indicator-position="outside">
+      <el-carousel-item v-for="url in urls" :key="url">
+        <el-image
+            style="width: auto; height: auto"
+            :src=url
+            fit="fill"></el-image>
+      </el-carousel-item>
+    </el-carousel>
+  </div>
 <!--  <div class="header">-->
 
 <!--  </div>-->
@@ -11,7 +28,31 @@
 
 <script>
 export default {
-
+  data() {
+    return {
+      urls: [
+        'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
+        'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
+        'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
+        'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
+        'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
+        'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
+        'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg'
+      ]
+    }
+  },
+  methods: {
+    handleCommand(command) {
+      this.$message('点击了 ' + command);
+      if (command=="login") {
+        this.$router.push("/login");
+      } else if (command=="b") {
+        this.$router.push("/home");
+      } else if (command=="about") {
+        this.$router.push("/about");
+      }
+    }
+  }
 }
 </script>
 

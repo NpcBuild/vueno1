@@ -2,9 +2,6 @@
   <div class="home">
     <Header/>
     <Info :Info="Info"/>
-    <router-link to="/Login">Login</router-link>
-    &nbsp;&nbsp;&nbsp;&nbsp;
-    <router-link to="/about">About</router-link>
   </div>
 </template>
 
