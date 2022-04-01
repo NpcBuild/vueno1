@@ -9,8 +9,8 @@ Vue.use(VueRouter)
 const routes = [
     {
         path: '/',
-        name: 'Login',
-        component: Login
+        name: 'Home',
+        component: Home
     },
     {
         path: '/about',
@@ -25,7 +25,10 @@ const routes = [
     {
         path: '/home',
         name: 'Home',
-        component: Home
+        component: Home,
+        meta: {                 //加一个自定义obj
+            requireAuth:true    //这个参数 true 代表需要登录才能进入
+        }
     }
 ]
 

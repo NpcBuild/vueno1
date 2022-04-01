@@ -21,6 +21,19 @@ Vue.config.productionTip = false
 
 require("./mock.js")
 
+router.beforeEach((to,from,next) => {
+  store.commit('GET_TOKEN')
+  // eslint-disable-next-line no-debugger
+  debugger
+  const token = store.state.token
+  if (!token && to.name!='Login') {
+    next({ path: "/login" })
+    // next({name: 'Login'})
+  } else {
+    next()
+  }
+})
+
 new Vue({
   router,
   store,

@@ -12,7 +12,7 @@
         <el-dropdown-item command="logOut" divided>退出</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
-    <el-carousel indicator-position="outside">
+    <el-carousel indicator-position="outside" type="card">
       <el-carousel-item v-for="url in urls" :key="url">
         <el-image
             style="width: auto; height: auto"
@@ -50,6 +50,8 @@ export default {
         this.$router.push("/home");
       } else if (command=="about") {
         this.$router.push("/about");
+      } else if (command=="logOut") {
+        this.$store.commit('CLEAR_TOKEN')
       }
     }
   }
@@ -57,14 +59,14 @@ export default {
 </script>
 
 <style scoped>
-  .el-carousel__item h3 {
-    color: #475669;
-    font-size: 18px;
-    opacity: 0.75;
-    line-height: 300px;
-    text-align: center;
-    margin: 0;
-  }
+  /*.el-carousel__item h3 {*/
+  /*  color: #475669;*/
+  /*  font-size: 18px;*/
+  /*  opacity: 0.75;*/
+  /*  line-height: 300px;*/
+  /*  text-align: center;*/
+  /*  margin: 0;*/
+  /*}*/
 
   .el-carousel__item:nth-child(2n) {
     background-color: #99a9bf;

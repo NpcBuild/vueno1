@@ -1,7 +1,7 @@
 <template>
   <div class="loginmain">
     <el-row type="flex" class="row-bg" justify="center">
-      <el-col :xl="6" :lg="7">
+      <el-col :xl="5" :lg="6">
         <h2 style="font-size: large">欢迎登陆<el-image :src="require('../../assets/npcLogo.png')" style="height: 20px;width: 55px;margin-left: 10px;"></el-image></h2>
         <div v-html="modss"></div>
         <p style="font-size: large">公众号：****************</p>
@@ -21,7 +21,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="submitForm('loginForm')" size="small">登录</el-button>
-            <el-button @click="resetForm('loginForm')" size="small">重置</el-button>
+            <el-button @click="resetForm('loginForm')" size="small">扫码</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -107,9 +107,11 @@ export default {
               //token只应在当前网站打开期间生效，所以将token保存在sessionStorage中
               window.sessionStorage.setItem("token",res.data.code);
 
+              this.$store.commit('SET_TOKEN',res.data.code)
+
               //
-              const jwt = res.headers['authorization']
-              this.$store.commit('SET_TOKEN',jwt)
+              // const jwt = res.headers['authorization']
+              // this.$store.commit('SET_TOKEN',jwt)
 
               //通过编程式导航跳转到首页，路由地址是/home
               this.$router.push("/home");
@@ -123,15 +125,15 @@ export default {
     },
     resetForm(formName) {
       // this.$refs[formName].resetFields();
-      this.$axios.get('/login', {
+      this.$axios.get('http://localhost:8082/login', {
       }, {
         headers: {
-          // // 'content-type': 'application/x-www-form-urlencoded;charset=UTF-8',
-          // 'content-type': 'application/json;charset=UTF-8',
-          // 'Access-Control-Allow-Origin': '*',
-          // 'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
-          // 'X-Powered-By':' 3.2.1',
-          // 'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
+          // 'content-type': 'application/x-www-form-urlencoded;charset=UTF-8',
+          'content-type': 'application/json;charset=UTF-8',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
+          'X-Powered-By':' 3.2.1',
+          'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
         }
       }).then(res=>{
         // eslint-disable-next-line no-debugger
@@ -160,25 +162,33 @@ export default {
 
 <style scoped>
   .loginmain {
-    height: 400px;
+    height: 290px;
     width: 64%;
     background-color: burlywood;
-    margin: auto;
+    margin: 180px auto;
     margin-left: 15%;
     margin-right: 15%;
     margin-top: 15%;
     margin-bottom: 15%;
     border-radius: 20px;
+    background-clip: padding-box;
+    padding: 15px 15px 15px 15px;
+    border: 2px solid #eaeaea;
+    box-shadow: 0 0 25px #42b983;
   }
   .el-row {
     /*background-color: #fafafa;*/
     background-color: aqua;
+    opacity: 0.8;    /*背景透明 0-1 */
     width: 80%;
     height: 100%;
     display: flex;
     align-items: center;
     text-align: center;
     margin-left: 10%;
+    border-radius: 10px;
+    border: 2px solid #eaeaea;
+    box-shadow: 30px 15px 50px #555555;
   }
   .el-divider {
     height: 200px;
