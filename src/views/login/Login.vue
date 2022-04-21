@@ -1,5 +1,6 @@
 <template>
   <div class="loginmain">
+<!--  <div>-->
     <el-row type="flex" class="row-bg" justify="center">
       <el-col :xl="5" :lg="6">
         <h2 style="font-size: large">欢迎登陆<el-image :src="require('../../assets/npcLogo.png')" style="height: 20px;width: 55px;margin-left: 10px;"></el-image></h2>
@@ -74,7 +75,7 @@ export default {
         ],
       },
       isLogin:false,
-      modss:'ss',
+      modss:'□',
       captchaImg: '',
     };
   },
@@ -164,7 +165,7 @@ export default {
   .loginmain {
     height: 290px;
     width: 64%;
-    background-color: burlywood;
+    background-color: #d3dce6;
     margin: 180px auto;
     margin-left: 15%;
     margin-right: 15%;
@@ -173,12 +174,12 @@ export default {
     border-radius: 20px;
     background-clip: padding-box;
     padding: 15px 15px 15px 15px;
-    border: 2px solid #eaeaea;
-    box-shadow: 0 0 25px #42b983;
+    /*border: 2px solid #969696;*/
+    box-shadow: 0 0 25px #969696;
   }
   .el-row {
     /*background-color: #fafafa;*/
-    background-color: aqua;
+    /*background-color: aqua;*/
     opacity: 0.8;    /*背景透明 0-1 */
     width: 80%;
     height: 100%;
@@ -187,8 +188,8 @@ export default {
     text-align: center;
     margin-left: 10%;
     border-radius: 10px;
-    border: 2px solid #eaeaea;
-    box-shadow: 30px 15px 50px #555555;
+    /*border: 2px solid #eaeaea;*/
+    /*box-shadow: 30px 15px 50px #555555;*/
   }
   .el-divider {
     height: 200px;

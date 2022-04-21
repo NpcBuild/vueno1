@@ -3,7 +3,7 @@
     <el-dropdown @command="handleCommand">
       <span class="el-dropdown-link">
 <!--        下拉菜单<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
-        <el-avatar size="large" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+        <el-avatar size="large" src="https://bpic.588ku.com/ad_diversion/19/08/22/915abbf3e26f11efc0c7e121b3c8f996.png"></el-avatar>
       </span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item command="login">登录</el-dropdown-item>
@@ -42,6 +42,11 @@ export default {
     }
   },
   methods: {
+    getUserInfo() {
+      this.$axios.get().then(res => {
+        this.userInfo = res.data.data
+      })
+    },
     handleCommand(command) {
       this.$message('点击了 ' + command);
       if (command=="login") {
