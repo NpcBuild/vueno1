@@ -126,31 +126,46 @@ export default {
     },
     resetForm(formName) {
       // this.$refs[formName].resetFields();
-      this.$axios.get('http://localhost:8082/login', {
-      }, {
-        headers: {
-          // 'content-type': 'application/x-www-form-urlencoded;charset=UTF-8',
-          'content-type': 'application/json;charset=UTF-8',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
-          'X-Powered-By':' 3.2.1',
-          'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
-        }
-      }).then(res=>{
+      // this.$axios.get('http://localhost:8082/login', {
+      // }, {
+      //   headers: {
+      //     // 'content-type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      //     'content-type': 'application/json;charset=UTF-8',
+      //     'Access-Control-Allow-Origin': '*',
+      //     'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
+      //     'X-Powered-By':' 3.2.1',
+      //     'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
+      //   }
+      // }).then(res=>{
+      //   // eslint-disable-next-line no-debugger
+      //   debugger
+      //   this.modss = res.data
+      //   console.log(res);
+      //   console.log(formName);
+      // })
+      // eslint-disable-next-line no-debugger
+      debugger
+      this.getRequest('/login', {}, {
+                'content-type': 'application/json;charset=UTF-8',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
+                'X-Powered-By':' 3.2.1',
+                'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
+              }).then(res => {
         // eslint-disable-next-line no-debugger
-        debugger
-        this.modss = res.data
-        console.log(res);
+                debugger
+        this.modss = res;
         console.log(formName);
       })
+      console.log(formName);
     },
     getCaptcha() {
       this.$axios.get('/captcha').then(res => {
         // eslint-disable-next-line no-debugger
         debugger
         console.log("res"+res)
-        this.loginForm.token = res.data.data.token
-        this.captchaImg = res.data.data.captchaImg
+        this.loginForm.token = res.data.token
+        this.captchaImg = res.data.captchaImg
       })
     }
   },

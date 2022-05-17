@@ -1,38 +1,106 @@
-import axios from "axios";
 // import qs from "querystring";
 // import {compile} from "vue-template-compiler";
+import  axios from 'axios';
+import router from '../router'
+import db from '../store/sessionStorage'
+import * as common from './common'
 
-/*
-处理失败的方法
-status:状态码
-info:信息
- */
-const errorHandle = (status,info) =>{
-    switch (status){
-        case 400:
-            console.log("语义有误，当前请求无法被服务器理解。")
-            break;
-        case 401:
-            //token令牌
-            console.log("服务器认证失败")
-            break;
-        case 403:
-            console.log("服务器已经理解请求，但是拒绝执行它")
-            break;
-        case 404:
-            console.log("请检查网络请求地址")
-            break;
-        case 500:
-            console.log("服务器遇到了一个未曾预料的状况，导致了它无法完成对请求的处理。")
-            break;
-        case 502:
-            console.log("作为网关或者代理工作的服务器尝试执行请求时，从上游服务器······")
-            break;
-        default:
-            console.log(info)
-            break;
+//请求结果拦截
+axios.interceptors.response.use(success => {
+    if (success.status && success.status == 200 && success.data.status == 500) {
+        alert(success.data.msg);
+        return;
     }
+    return success.data;
+}, error => {
+    if (error.response.status == 504 || error.response.status == 404) {
+        alert('服务器迷路了( ╯□╰ )，再试一次吧。');
+    } else if (error.response.status == 403) {
+        alert('权限不足，请联系管理员');
+    } else if (error.response.status == 401) {
+        // 防止重复弹出消息
+        if(db.get("LOGINFLAG") == "0"){
+            alert('尚未登录或登录状态已过期，请登录')
+            db.remove("LOGINFLAG")
+            db.save("LOGINFLAG","1")
+        }
+        router.replace('/');
+    } else if (error.response.status == 429) {
+        alert('骚年，你的手速有点快哦！(￣.￣)...')
+    } else {
+        alert('未知错误!')
+    }
+    return;
+})
+
+let base = common.baseApi;
+export const postKeyValueRequest = (url, params) => {
+    return axios({
+        method: 'post',
+        url: `${base}${url}`,
+        data: params,
+        transformRequest: [function (data) {
+            let ret = '';
+            for (let i in data) {
+                ret += encodeURIComponent(i) + '=' + encodeURIComponent(data[i]) + '&'
+            }
+            return ret;
+        }],
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    });
+}
+export const postRequest = (url, params, headers) => {
+    return axios({
+        method: 'post',
+        url: `${base}${url}`,
+        data: params,
+        headers: headers
+    })
+}
+export const putRequest = (url, params) => {
+    return axios({
+        method: 'put',
+        url: `${base}${url}`,
+        data: params
+    })
+}
+export const getRequest = (url, params, headers) => {
+    let apiUrl = `${base}${url}`;
+    apiUrl = getApiUrl(apiUrl,params);
+    // 请求
+    return axios({
+        method: 'get',
+        url: apiUrl,
+        data: params,
+        headers: headers
+    })
+}
+export const deleteRequest = (url, params) => {
+    let apiUrl = `${base}${url}`;
+    apiUrl = getApiUrl(apiUrl,params);
+    return axios({
+        method: 'delete',
+        url: apiUrl,
+        data: params
+    })
 }
 
-// const axios = new axios();
-export default errorHandle()
+
+// 处理参数转换
+function getApiUrl(url,params){
+    let apiUrl = url;
+    let i = 0;
+    for (const key in params) {
+        const value = params[key];
+        const param = key+"="+value;
+        let s = '?';
+        if ( i > 0 ){
+            s = '&';
+        }
+        apiUrl = apiUrl+s+param;
+        i++;
+    }
+    return apiUrl;
+}

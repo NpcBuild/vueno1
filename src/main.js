@@ -1,23 +1,28 @@
 import Vue from 'vue'
 import App from './App.vue'
-// import Header from "@/components/Header";
-// import Home from "@/views/Home";
 import router from "@/router";
 import store from "./store";
 import "./assets/css/common.css"
-// import axios from "./axios";
 import axios from "axios";
 Vue.prototype.$axios = axios //全局使用
 
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
-import VueParticles from "vue-particles";
+//背景
+// import VueParticles from "vue-particles";
+// Vue.use(VueParticles);
+
+// 引入新手引导
+import VueIntro from 'vue-introjs';
+import 'intro.js/introjs.css';
+Vue.use(VueIntro);
 
 Vue.use(ElementUI);
-Vue.use(VueParticles);
 
 Vue.config.productionTip = false
+import {getRequest} from "./utils/request"
+Vue.prototype.getRequest = getRequest;
 
 require("./mock.js")
 
@@ -26,10 +31,13 @@ router.beforeEach((to,from,next) => {
   // eslint-disable-next-line no-debugger
   debugger
   const token = store.state.token
-  if (!token && to.name!='Login') {
-    next({ path: "/login" })
-    // next({name: 'Login'})
-  } else {
+  if(to.meta.requireAuth) {
+    if (!token && to.name!='Login') {
+      next({ path: "/login" })
+    } else {
+      next()
+    }
+  }else {
     next()
   }
 })
