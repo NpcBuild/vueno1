@@ -20,16 +20,16 @@
         </div>
       </div>
       <div class="con-box left">
-        <h2>欢迎来到<span/>登录页</h2>
+        <h2>欢迎来到注册页</h2>
         <p>快来~~~~~~</p>
-        <!--    <img src="./src/assets/npcLogo.png" alt="">-->
+        <img src="https://qcloudtest-1258517105.cos.ap-guangzhou.myqcloud.com/IMG_1932.PNG" alt="">
         <p>已有帐号</p>
         <button id="login" @click="toLogIn">去登录</button>
       </div>
       <div class="con-box right">
         <h2>欢迎来到<span>NPC</span>登录页</h2>
         <p>快来~~~~~~</p>
-        <!--    <img src="./src/assets/npcLogo.png" alt="">-->
+        <img src="" alt="">
         <p>没有帐号？</p>
         <button id="register" @click="goToRegister">去注册</button>
       </div>
@@ -204,7 +204,9 @@ input:focus::placeholder{
   height: 150px;
   /*透明度*/
   opacity: 0.9;
-  margin: 40px 0;
+  /*margin: 40px 0;*/
+  display: block;
+  margin: 0 auto;
 }
 .con-box button{
   margin-top: 3%;
