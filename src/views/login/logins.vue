@@ -1,57 +1,59 @@
 <template>
-<div class="container">
-  <div class="form-box">
-    <!-- 注册 -->
-    <div class="register-box hidden">
-      <h1>注册</h1>
-      <input type="text" placeholder="用户名"/>
-      <input type="phone" placeholder="手机号"/>
-      <input type="password" placeholder="密码"/>
-      <input type="password" placeholder="确认密码"/>
-      <button>注册</button>
+  <div class="main">
+    <div class="container">
+      <div class="form-box">
+        <!-- 注册 -->
+        <div class="register-box hidden">
+          <h1>注册</h1>
+          <input type="text" placeholder="用户名"/>
+          <input type="phone" placeholder="手机号"/>
+          <input type="password" placeholder="密码"/>
+          <input type="password" placeholder="确认密码"/>
+          <button>注册</button>
+        </div>
+        <!-- 登录 -->
+        <div class="login-box">
+          <h1>登录</h1>
+          <input type="text" placeholder="用户名"/>
+          <input type="password" placeholder="密码"/>
+          <button>登录</button>
+        </div>
+      </div>
+      <div class="con-box left">
+        <h2>欢迎来到<span/>登录页</h2>
+        <p>快来~~~~~~</p>
+        <!--    <img src="./src/assets/npcLogo.png" alt="">-->
+        <p>已有帐号</p>
+        <button id="login" @click="toLogIn">去登录</button>
+      </div>
+      <div class="con-box right">
+        <h2>欢迎来到<span>NPC</span>登录页</h2>
+        <p>快来~~~~~~</p>
+        <!--    <img src="./src/assets/npcLogo.png" alt="">-->
+        <p>没有帐号？</p>
+        <button id="register" @click="goToRegister">去注册</button>
+      </div>
     </div>
-    <!-- 登录 -->
-    <div class="login-box">
-      <h1>登录</h1>
-      <input type="text" placeholder="用户名"/>
-      <input type="password" placeholder="密码"/>
-      <button>登录</button>
-    </div>
   </div>
-  <div class="con-box left">
-    <h2>欢迎来到<span/>登录页</h2>
-    <p>快来~~~~~~</p>
-<!--    <img src="./src/assets/npcLogo.png" alt="">-->
-    <p>已有帐号</p>
-    <button id="login" onclick="toLogIn">去登录</button>
-  </div>
-  <div class="con-box right">
-    <h2>欢迎来到<span/>登录页</h2>
-    <p>快来~~~~~~</p>
-    <!--    <img src="./src/assets/npcLogo.png" alt="">-->
-    <p>没有帐号？</p>
-    <button id="register" onclick="goToRegister">去注册</button>
-  </div>
-</div>
 </template>
 
 <script>
-// let login = document.getElementById("login");
-// let register = document.getElementById("register");
-let form_box = document.getElementsByClassName("form_box")[0];
-let register_box = document.getElementsByClassName("register-box")[0];
-let login_box = document.getElementsByClassName("login-box")[0];
-
 
 export default {
   name: "logins",
   methods: {
     goToRegister() {
+      let form_box = document.getElementsByClassName("form-box")[0];
+      let register_box = document.getElementsByClassName("register-box")[0];
+      let login_box = document.getElementsByClassName("login-box")[0];
       form_box.style.transform='translateX(80%)';
       login_box.classList.add('hidden');
       register_box.classList.remove('hidden');
     },
     toLogIn() {
+      let form_box = document.getElementsByClassName("form-box")[0];
+      let register_box = document.getElementsByClassName("register-box")[0];
+      let login_box = document.getElementsByClassName("login-box")[0];
       form_box.style.transform = 'translateX(0%)';
       register_box.classList.add('hidden');
       login_box.classList.remove('hidden');
@@ -65,7 +67,7 @@ export default {
   padding: 0;
   margin: 0;
 }
-body{
+.main{
   /*百分之百的窗口高度*/
   height: 100vh;
   /*弹性布局*/
@@ -118,6 +120,7 @@ h1{
   color: #fff;
   /*字间距*/
   letter-spacing: 5px;
+  font-size: 18px;
 }
 input{
   background-color: transparent;
@@ -144,5 +147,82 @@ input:focus{
 }
 input:focus::placeholder{
   opacity: 0;
+}
+.form-box button{
+  width: 70%;
+  margin-top: 35px;
+  background-color: #f6f6f6;
+  outline: none;
+  border-radius: 8px;
+  padding: 13px;
+  color: #d3dce6;
+  letter-spacing: 2px;
+  border: none;
+  cursor: pointer;
+}
+.form-box button:hover{
+  background-color: #d3dce6;
+  color: #f6f6f6;
+  transition: background-color 0.5s ease;
+}
+.con-box{
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  justify-items: center;
+  /*绝对定位*/
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.con-box.left{
+  left: -2%;
+}
+.con-box.right{
+  right: -2%;
+}
+.con-box h2{
+  color: #8e9aaf;
+  font-size: 25px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  text-align: center;
+  margin-bottom: 4px;
+}
+.con-box p{
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #8e9aaf;
+  text-align: center;
+}
+.con-box span{
+  color: #d3b7d8;
+}
+.con-box img{
+  width: 150px;
+  height: 150px;
+  /*透明度*/
+  opacity: 0.9;
+  margin: 40px 0;
+}
+.con-box button{
+  margin-top: 3%;
+  background-color: #fff;
+  color: #a262ad;
+  border: 1px solid #d3b7d8;
+  padding: 6px 10px;
+  letter-spacing: 1px;
+  outline: none;
+  /*position: absolute;*/
+  width: 20%;
+  display: block;
+  margin: 0 auto;
+  /*鼠标放上变小手*/
+  cursor: pointer;
+}
+.con-box button:hover{
+  background-color: #a262ad;
+  color: #f6f6f6;
 }
 </style>
