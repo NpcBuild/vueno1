@@ -21,8 +21,9 @@ Vue.use(VueIntro);
 Vue.use(ElementUI);
 
 Vue.config.productionTip = false
-import {getRequest} from "./utils/request"
+import {getRequest,postRequest} from "./utils/request"
 Vue.prototype.getRequest = getRequest;
+Vue.prototype.postRequest = postRequest;
 
 require("./mock.js")
 

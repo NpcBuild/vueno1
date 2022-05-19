@@ -16,20 +16,20 @@
           <h1>登录</h1>
           <input type="text" placeholder="用户名"/>
           <input type="password" placeholder="密码"/>
-          <button>登录</button>
+          <button @click="submitForm('loginForm')">登录</button>
         </div>
       </div>
       <div class="con-box left">
         <h2>欢迎来到注册页</h2>
         <p>快来~~~~~~</p>
-        <img src="https://qcloudtest-1258517105.cos.ap-guangzhou.myqcloud.com/IMG_1932.PNG" alt="">
+        <img src="" alt="">
         <p>已有帐号</p>
         <button id="login" @click="toLogIn">去登录</button>
       </div>
       <div class="con-box right">
         <h2>欢迎来到<span>NPC</span>登录页</h2>
         <p>快来~~~~~~</p>
-        <img src="" alt="">
+        <img src="https://qcloudtest-1258517105.cos.ap-guangzhou.myqcloud.com/IMG_1932.PNG" alt="">
         <p>没有帐号？</p>
         <button id="register" @click="goToRegister">去注册</button>
       </div>
@@ -41,6 +41,14 @@
 
 export default {
   name: "logins",
+  data () {
+    return {
+      loginForm: {
+        user:'yf',
+        pass:'123',
+      },
+    }
+  },
   methods: {
     goToRegister() {
       let form_box = document.getElementsByClassName("form-box")[0];
@@ -57,6 +65,47 @@ export default {
       form_box.style.transform = 'translateX(0%)';
       register_box.classList.add('hidden');
       login_box.classList.remove('hidden');
+    },
+    submitForm(loginForm) {
+      // this.$refs[loginForm].validate((valid,invalidFields)=>{
+      //   console.log("valid:"+valid+invalidFields);
+      //   if (valid) {
+          let _this = this;
+          this.postRequest('/logins', {
+            account: _this.loginForm.user,
+            password: _this.loginForm.pass,
+          }, {
+            'content-type': 'application/json;charset=UTF-8',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
+            'X-Powered-By':' 3.2.1',
+            'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
+          }).then(res => {
+
+            // eslint-disable-next-line no-debugger
+            debugger
+            if (res.code == "0"){
+              _this.$message.success(res.message);
+              //登录成功后，token保存到客户端的sessionStorage中
+              //项目中其他的API接口，必须在登录之后才能访问，记录token就是为了当我们访问有权限的接口时可以提供身份认证信息
+              //token只应在当前网站打开期间生效，所以将token保存在sessionStorage中
+              window.sessionStorage.setItem("token",res.code);
+
+              this.$store.commit('SET_TOKEN',res.code)
+
+              //
+              // const jwt = res.headers['authorization']
+              // this.$store.commit('SET_TOKEN',jwt)
+
+              //通过编程式导航跳转到首页，路由地址是/home
+              this.$router.push("/home");
+            }else {
+              _this.$message.error(res.message);
+            }
+            console.log(loginForm);
+          })
+        // }
+      // })
     },
   }
 }

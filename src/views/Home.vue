@@ -28,13 +28,15 @@ export default {
     api.getPyqwenan({
       key:"9926be2444c935728b45d5e4b6f50da0"
     }).then(res =>{
-      console.log(res.data)
-      if (res.data.code == 200){
-        this.Info.content = res.data.newslist[0].content
-        this.Info.source = res.data.newslist[0].source
+      console.log(res)
+      // eslint-disable-next-line no-debugger
+      debugger
+      if (res.code == 200){
+        this.Info.content = res.newslist[0].content
+        this.Info.source = res.newslist[0].source
       }
-      console.log(res.data.newslist[0].content)
-      console.log(res.data.newslist[0].source)
+      console.log(res.newslist[0].content)
+      console.log(res.newslist[0].source)
     }).catch((error) => {
       console.log(error)
     })
