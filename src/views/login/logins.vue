@@ -30,6 +30,20 @@
         <h2>欢迎来到<span>NPC</span>登录页</h2>
         <p>快来~~~~~~</p>
         <img src="https://qcloudtest-1258517105.cos.ap-guangzhou.myqcloud.com/IMG_1932.PNG" alt="">
+        <div class="social-media">
+          <a href="#" class="social-icon">
+            <i class="el-icon-eleme"></i>
+          </a>
+          <a href="#" class="social-icon">
+            <i class="el-icon-loading"></i>
+          </a>
+          <a href="#" class="social-icon">
+            <i class="fab fa-google"></i>
+          </a>
+          <a href="#" class="social-icon">
+            <i class="el-icon-share"></i>
+          </a>
+        </div>
         <p>没有帐号？</p>
         <button id="register" @click="goToRegister">去注册</button>
       </div>
