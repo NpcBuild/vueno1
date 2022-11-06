@@ -13,13 +13,16 @@
 <!--      ></vue-unity-webgl>-->
     </div>
     <router-link to="/Login">Login</router-link>
+    <index :list="tableData" :table-attr="tableAttr" :stripe="false" :cell-class-name="cellClassName"></index>
   </div>
 </template>
 <script>
 // import VueUnityWebgl from '@/components/vue-unity-webgl';
+import index from '@/components/table/index'
 export default {
   components: {
     // VueUnityWebgl
+    index
   },
   data() {
     return {
@@ -28,7 +31,45 @@ export default {
       webglConfig: '/Scenes1/Build/Scenes1.json',
       webglUnityLoader: '/Scenes1/Build/UnityLoader.js',
       webglWith: 1000,
-      webglHeight: 600
+      webglHeight: 600,
+      tableData: [{
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-04',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1517 弄'
+      }, {
+        date: '2016-05-01',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1519 弄'
+      }, {
+        date: '2016-05-03',
+        name: '王小虎',
+        address: '上海市普陀区金沙\n江路 1516 弄'
+      }],
+      tableAttr: [
+        { prop: 'date',
+          label: '日期',
+          tooltip: true,
+          width: '400px',
+          align: 'left',
+          type: 'date'},
+        { prop: 'name',
+          label: '姓名',
+          tooltip: true,
+          width: '400px',
+          align: 'left',
+          type: 'text'},
+        { prop: 'address',
+          label: '住址',
+          tooltip: false,
+          width: '400px',
+          align: 'left',
+          wrap: true,
+          type: 'textarea'}
+      ]
     }
   },
   created() {
@@ -51,6 +92,13 @@ export default {
     sendWebglMessage(message, info) {
       console.log(info)
       this.$refs.vueUnityWebgl.message('JsTalker', 'toUnityWebgl', message)
+    },
+    cellClassName({row, column, rowIndex, columnIndex}) {
+      console.log(row);
+      console.log(column);
+      console.log(rowIndex);
+      console.log(columnIndex);
+      return "green";
     }
   }
 }

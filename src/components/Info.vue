@@ -2,11 +2,10 @@
   <div class="info">
     <p class="title">
       <i></i>
-      文案
+      {{ Info.source }}
     </p>
     <div class="content">
       <p>{{ Info.content }}</p>
-      <p>-----{{ Info.source }}</p>
     </div>
   </div>
 </template>

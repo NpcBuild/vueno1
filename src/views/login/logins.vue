@@ -5,31 +5,40 @@
         <!-- 注册 -->
         <div class="register-box hidden">
           <h1>注册</h1>
-          <input type="text" placeholder="用户名"/>
-          <input type="phone" placeholder="手机号"/>
-          <input type="password" placeholder="密码"/>
-          <input type="password" placeholder="确认密码"/>
-          <button>注册</button>
+          <input type="text" placeholder="用户名" v-model="registForm.user"/>
+          <input type="phone" placeholder="手机号" v-model="registForm.phone"/>
+          <input type="password" placeholder="密码" v-model="registForm.pass"/>
+          <input type="password" placeholder="确认密码" v-model="registForm.confirmPass"/>
+          <button @click="regist('registForm')">注册</button>
         </div>
         <!-- 登录 -->
         <div class="login-box">
           <h1>登录</h1>
-          <input type="text" placeholder="用户名"/>
-          <input type="password" placeholder="密码"/>
+          <input type="text" placeholder="用户名" v-model="loginForm.user"/>
+          <input type="password" placeholder="密码" v-model="loginForm.pass" @keyup.enter="submitForm('loginForm')"/>
           <button @click="submitForm('loginForm')">登录</button>
         </div>
       </div>
-      <div class="con-box left">
+      <div class="con-box left" slot="placeholder">
         <h2>欢迎来到注册页</h2>
         <p>快来~~~~~~</p>
         <img src="" alt="">
-        <p>已有帐号</p>
+<!--        <div class="block">-->
+<!--          <span class="demonstration">自定义</span>-->
+<!--          <el-image :src="src">-->
+<!--            <div slot="placeholder" class="image-slot">-->
+<!--              加载中<span class="dot">...</span>-->
+<!--            </div>-->
+<!--          </el-image>-->
+<!--        </div>-->
+        <p style="margin-top: 15px">已有帐号</p>
         <button id="login" @click="toLogIn">去登录</button>
       </div>
       <div class="con-box right">
         <h2>欢迎来到<span>NPC</span>登录页</h2>
         <p>快来~~~~~~</p>
         <img src="https://qcloudtest-1258517105.cos.ap-guangzhou.myqcloud.com/IMG_1932.PNG" alt="">
+<!--        <img src="" alt="">-->
         <div class="social-media">
           <a href="#" class="social-icon">
             <i class="el-icon-eleme"></i>
@@ -38,13 +47,10 @@
             <i class="el-icon-loading"></i>
           </a>
           <a href="#" class="social-icon">
-            <i class="fab fa-google"></i>
-          </a>
-          <a href="#" class="social-icon">
             <i class="el-icon-share"></i>
           </a>
         </div>
-        <p>没有帐号？</p>
+        <p style="margin-top: 15px">没有帐号？</p>
         <button id="register" @click="goToRegister">去注册</button>
       </div>
     </div>
@@ -52,15 +58,20 @@
 </template>
 
 <script>
-
 export default {
   name: "logins",
   data () {
     return {
       loginForm: {
-        user:'yf',
-        pass:'123',
+        user:'',
+        pass:'',
       },
+      registForm: {
+        user:'',
+        phone:'',
+        pass:'',
+        confirmPass:'',
+      }
     }
   },
   methods: {
@@ -85,9 +96,9 @@ export default {
       //   console.log("valid:"+valid+invalidFields);
       //   if (valid) {
           let _this = this;
-          this.postRequest('/logins', {
+          this.postRequest('/login', {
             account: _this.loginForm.user,
-            password: _this.loginForm.pass,
+            userPwd: _this.loginForm.pass,
           }, {
             'content-type': 'application/json;charset=UTF-8',
             'Access-Control-Allow-Origin': '*',
@@ -120,6 +131,27 @@ export default {
           })
         // }
       // })
+    },
+    regist(registForm) {
+      let _this = this;
+      this.postRequest('/regist', {
+        account: _this.registForm.user,
+        userPwd: _this.registForm.pass,
+        phone: _this.registForm.phone,
+      }, {
+        'content-type': 'application/json;charset=UTF-8',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
+        'X-Powered-By':' 3.2.1',
+        'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
+      }).then(res => {
+        // eslint-disable-next-line no-debugger
+        debugger
+        if (res.code == "0"){
+          _this.$message.success(res.message);
+        }else _this.$message.error(res.message)
+      })
+      console.log(registForm);
     },
   }
 }
@@ -289,5 +321,28 @@ input:focus::placeholder{
 .con-box button:hover{
   background-color: #a262ad;
   color: #f6f6f6;
+}
+
+.social-media{
+  display: flex;
+  justify-content: center;
+}
+.social-icon{
+  height: 30px;
+  width: 30px;
+  border: 1px solid #333;
+  margin: 0 0.1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  font-size: 0.2rem;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+.social-icon:hover{
+  color: #4481eb;
+  border-color: #4481eb;
 }
 </style>

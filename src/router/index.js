@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home'
 import Login from '../views/login/Login'
 import logins from '../views/login/logins'
+import socket from '../views/socket/socket'
 import About from '../views/About'
 
 Vue.use(VueRouter)
@@ -47,6 +48,11 @@ const routes = [
         path: '/logins',
         name: 'logins',
         component: logins
+    },
+    {
+        path: '/socket',
+        name: 'socket',
+        component: socket
     },
     {
         path: '/home',

@@ -18,6 +18,18 @@ import VueIntro from 'vue-introjs';
 import 'intro.js/introjs.css';
 Vue.use(VueIntro);
 
+// 引入antd
+// import Antd from 'ant-design-vue';
+// import 'ant-design-vue/dist/antd.css';
+// Vue.use(Antd);
+// import { Button } from "ant-design-vue";
+// import 'ant-design-vue/lib/button/style/css'
+// Vue.component(Button.name, Button)
+
+//moment.js
+import moment from 'moment'//导入文件
+Vue.prototype.$moment = moment;//赋值使用
+
 Vue.use(ElementUI);
 
 Vue.config.productionTip = false
@@ -26,22 +38,29 @@ Vue.prototype.getRequest = getRequest;
 Vue.prototype.postRequest = postRequest;
 
 require("./mock.js")
-
-router.beforeEach((to,from,next) => {
-  store.commit('GET_TOKEN')
-  // eslint-disable-next-line no-debugger
-  debugger
-  const token = store.state.token
-  if(to.meta.requireAuth) {
-    if (!token && to.name!='Login') {
-      next({ path: "/login" })
-    } else {
-      next()
-    }
-  }else {
-    next()
+import dragBall from 'vue-drag-ball'
+Vue.use(dragBall)
+Vue.directive('drag',{
+  bind(el,binding,vnode){
+    console.log(el);
+    console.log(binding);
+    console.log(vnode);
   }
 })
+
+// router.beforeEach((to,from,next) => {
+//   store.commit('GET_TOKEN')
+//   const token = store.state.token
+//   if(to.meta.requireAuth) {
+//     if (!token && to.name!='logins') {
+//       next({ path: "/logins" })
+//     } else {
+//       next()
+//     }
+//   }else {
+//     next()
+//   }
+// })
 
 new Vue({
   router,

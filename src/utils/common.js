@@ -1,7 +1,8 @@
 /** 公共配置 */
 
 // API接口前缀
-export const baseApi = "http://localhost:8082";
+// export const baseApi = "http://localhost:8082";
+export const baseApi = "http://localhost:1314";
 
 /** 处理字符内容截取 */
 export function handleContent(content, charLength){
