@@ -5,6 +5,7 @@ import Login from '../views/login/Login'
 import logins from '../views/login/logins'
 import socket from '../views/socket/socket'
 import About from '../views/About'
+import setting from '../views/setting/setting'
 
 Vue.use(VueRouter)
 
@@ -12,6 +13,9 @@ const myself = r => require.ensure([], () => r(require('@/pages/me')), 'myBooksh
 
 // 精品页
 const homeIndex = r => require.ensure([], () => r(require('@/pages/home/index')), 'homeIndex');
+const loading = r => require.ensure([], () => r(require('@/components/loading/index')), 'loading');
+const weather = r => require.ensure([], () => r(require('@/components/weather/index')), 'weather');
+const pagination = r => require.ensure([], () => r(require('@/components/pagination/index')), 'pagination');
 
 const routes = [
     {
@@ -61,6 +65,29 @@ const routes = [
         meta: {                 //加一个自定义obj
             requireAuth:true    //这个参数 true 代表需要登录才能进入
         }
+    },
+    {
+        path: '/setting',
+        name: 'setting',
+        component: setting,
+        meta: {                 //加一个自定义obj
+            requireAuth:true    //这个参数 true 代表需要登录才能进入
+        }
+    },
+    {
+        path: '/loading',
+        name: 'loading',
+        component: loading
+    },
+    {
+        path: '/weather',
+        name: 'weather',
+        component: weather
+    },
+    {
+        path: '/pagination',
+        name: 'pagination',
+        component: pagination
     }
 ]
 

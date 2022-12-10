@@ -1,5 +1,8 @@
 <template>
   <div>
+    <h3>服务器端返回的应答消息</h3>
+    <textarea id="responseText" style="width: 1024px;height: 300px;"></textarea>
+    <hr color="black" />
     <el-form>
       <el-form-item label="账号" prop="uid">
         <el-input type="text" v-model="form.uid" autocomplete="off"></el-input>
@@ -9,13 +12,11 @@
       </el-form-item>
       <el-button @click="send">发送ws消息</el-button>
     </el-form>
-    <hr color="black" />
-    <h3>服务器端返回的应答消息</h3>
-    <textarea id="responseText" style="width: 1024px;height: 300px;"></textarea>
   </div>
 </template>
 
 <script>
+
 var socket;
 export default {
   name: "socket",
@@ -36,9 +37,8 @@ export default {
         window.WebSocket = window.MozWebSocket;
       }
       if (window.WebSocket) {
-        socket = new WebSocket("ws://127.0.0.1:12345/socket?uid=666&gid=777");
+        socket = new WebSocket("ws://127.0.0.1:12345/socket?uid=yf&gid=777");
         socket.onmessage = function (event) {
-          debugger
           var ta = document.getElementById('responseText');
           ta.value += event.data + "\r\n";
         };
@@ -59,7 +59,14 @@ export default {
     send() {
       if (!window.WebSocket) {return;}
       if (socket.readyState == WebSocket.OPEN) {
-        socket.send(this.form.uid+':'+this.form.message);
+        // socket.send(this.form.uid+':'+this.form.message);
+        this.getRequest('/socket/yf',{},{
+          'content-type': 'application/json;charset=UTF-8',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
+          'X-Powered-By':' 3.2.1',
+          'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
+        })
       } else {
         alert("WebSocket 连接没有成功建立！");
       }
