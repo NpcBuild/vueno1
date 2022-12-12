@@ -13,9 +13,13 @@ const myself = r => require.ensure([], () => r(require('@/pages/me')), 'myBooksh
 
 // 精品页
 const homeIndex = r => require.ensure([], () => r(require('@/pages/home/index')), 'homeIndex');
+const chat = r => require.ensure([], () => r(require('@/components/chat/index')), 'chat');
+const chat2 = r => require.ensure([], () => r(require('@/components/chat/index2')), 'chat2');
 const loading = r => require.ensure([], () => r(require('@/components/loading/index')), 'loading');
 const weather = r => require.ensure([], () => r(require('@/components/weather/index')), 'weather');
 const pagination = r => require.ensure([], () => r(require('@/components/pagination/index')), 'pagination');
+const test = r => require.ensure([], () => r(require('@/components/test/index')), 'test');
+const test2 = r => require.ensure([], () => r(require('@/components/test2/index')), 'test2');
 
 const routes = [
     {
@@ -67,6 +71,22 @@ const routes = [
         }
     },
     {
+        path: '/chat',
+        name: 'chat',
+        component: chat,
+        meta: {                 //加一个自定义obj
+            requireAuth:true    //这个参数 true 代表需要登录才能进入
+        }
+    },
+    {
+        path: '/chat2',
+        name: 'chat2',
+        component: chat2,
+        meta: {                 //加一个自定义obj
+            requireAuth:true    //这个参数 true 代表需要登录才能进入
+        }
+    },
+    {
         path: '/setting',
         name: 'setting',
         component: setting,
@@ -88,6 +108,16 @@ const routes = [
         path: '/pagination',
         name: 'pagination',
         component: pagination
+    },
+    {
+        path: '/test',
+        name: 'test',
+        component: test
+    },
+    {
+        path: '/test2',
+        name: 'test2',
+        component: test2
     }
 ]
 
