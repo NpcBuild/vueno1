@@ -263,6 +263,7 @@ $wrapper: 1000px;
 $blue: #00b0ff;
 
 .body {
+  height: 100vh;
   background-color: $bg;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -271,13 +272,13 @@ $blue: #00b0ff;
   background-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/image.jpg');
   background-size: cover;
   background-repeat: none;
-}
-.wrapper {
-  position: relative;
-  left: 50%;
-  width: $wrapper;
-  height: 800px;
-  transform: translate(-50%, 0);
+  .wrapper {
+    position: relative;
+    left: 50%;
+    width: $wrapper;
+    height: 800px;
+    transform: translate(-50%, 0);
+  }
 }
 .container {
   position: relative;

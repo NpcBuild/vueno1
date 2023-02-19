@@ -20,6 +20,7 @@ const weather = r => require.ensure([], () => r(require('@/components/weather/in
 const pagination = r => require.ensure([], () => r(require('@/components/pagination/index')), 'pagination');
 const test = r => require.ensure([], () => r(require('@/components/test/index')), 'test');
 const test2 = r => require.ensure([], () => r(require('@/components/test2/index')), 'test2');
+const voice = r => require.ensure([], () => r(require('@/components/voice/index')), 'voice');
 
 const routes = [
     {
@@ -118,6 +119,11 @@ const routes = [
         path: '/test2',
         name: 'test2',
         component: test2
+    },
+    {
+        path: '/voice',
+        name: 'voice',
+        component: voice
     }
 ]
 
