@@ -7,6 +7,11 @@ module.exports = {
   devServer: {
       port: 9000,
       open: true,
+      // 解决 invalid host header
+      allowedHosts: [
+          'yf.com', // 允许访问的域名地址，即花生壳内网穿透的地址
+          '.yf.com'   // .是二级域名的通配符
+      ],
       proxy: {
           "/api": {
               //请求源地址
