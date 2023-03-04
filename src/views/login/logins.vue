@@ -22,7 +22,7 @@
       <div class="con-box left" slot="placeholder">
         <h2>欢迎来到注册页</h2>
         <p>快来~~~~~~</p>
-        <img src="" alt="">
+        <img src="@/assets/images/IMG_1932.png" alt="">
 <!--        <div class="block">-->
 <!--          <span class="demonstration">自定义</span>-->
 <!--          <el-image :src="src">-->
@@ -36,9 +36,9 @@
       </div>
       <div class="con-box right">
         <h2>欢迎来到<span>NPC</span>登录页</h2>
-        <p>快来~~~~~~</p>
-        <img src="https://qcloudtest-1258517105.cos.ap-guangzhou.myqcloud.com/IMG_1932.PNG" alt="">
-<!--        <img src="" alt="">-->
+        <p>扫码登录</p>
+<!--        <img src="https://qcloudtest-1258517105.cos.ap-guangzhou.myqcloud.com/IMG_1932.PNG" alt="">-->
+        <img :src="imgBase" alt="">
         <div class="social-media">
           <a href="#" class="social-icon">
             <i class="el-icon-eleme"></i>
@@ -58,7 +58,6 @@
 </template>
 
 <script>
-
 export default {
   name: "logins",
   data () {
@@ -72,10 +71,25 @@ export default {
         phone:'',
         pass:'',
         confirmPass:'',
-      }
+      },
+      imgBase: '' //存图片字节流
     }
   },
+  mounted() {
+    this.qrCode();
+  },
   methods: {
+    qrCode() {
+      this.getRequest('/qrCode', {}, {
+        'content-type': 'application/json;charset=UTF-8',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
+        'X-Powered-By':' 3.2.1',
+        'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
+      }).then(res => {
+        this.imgBase = 'data:image/jpeg;base64,' + res.data;
+      })
+    },
     goToRegister() {
       let form_box = document.getElementsByClassName("form-box")[0];
       let register_box = document.getElementsByClassName("register-box")[0];
@@ -325,6 +339,7 @@ input:focus::placeholder{
 }
 
 .social-media{
+  margin-top: 10px;
   display: flex;
   justify-content: center;
 }
