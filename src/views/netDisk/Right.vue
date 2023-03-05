@@ -44,17 +44,13 @@
     </div>
     <el-table :data="search(keywords)"  :height="height">
       <el-table-column prop="name" label="文件名" width="800">
-        <template slot-scope="{row,$index}">
-          <img :src="'../../static/img/'+row.img" alt="" style="cursor: default;
-display: block;
-height: 26px;
-width: 26px;
-position: absolute;
-left:0px;
-top: 10px;">
-          <a>{{$index}}</a>
-          <a href="javascript:void(0)" style="position: absolute;
-left:40px;top: 12px;" @click="next(row.name)">{{row.name}}</a>
+<!--        <template slot-scope="{row,$index}">-->
+        <template slot-scope="{row}">
+<!--          <img :src="'@/assets/static/img/'+row.img" alt="" style="cursor: default;-->
+<!--            display: block;height: 26px;width: 26px;position: absolute;left:0px;top: 10px;">-->
+          <img :src="'data:image/png;base64,' + row.img" alt="" style="cursor: default;
+            display: block;height: 26px;width: 26px;position: absolute;left:20px;top: 10px;">
+          <a href="javascript:void(0)" style="position: absolute;left:60px;top: 12px;" @click="next(row.name)">{{row.name}}</a>
 
         </template>
       </el-table-column >
@@ -104,11 +100,12 @@ this.init()
     methods: {
       init(){
         localStorage.setItem('path','/')
-        this.$axios.post(this.$HOST + 'v2/filelist', this.$qs.stringify({
-          sign: this.$sign,
-          username:localStorage.getItem('name')
-        })).then(res => {
-
+        this.postRequest('/netDisk/filelist', {})
+        // this.$axios.post(this.$HOST + 'netDisk/filelist', this.$qs.stringify({
+        //   sign: this.$sign,
+        //   username:localStorage.getItem('name')
+        // }))
+            .then(res => {
           res.data.data.dir.forEach(item => {
             let size;
             if (item.size == '') {
@@ -122,7 +119,7 @@ this.init()
                 size = (item.size / 1024 / 1024 / 1024).toFixed(2) + 'GB';
               }
             }
-            this.tableData.push({name: item.name, time: item.mtime, img: item.img, size: size})
+            this.tableData.push({name: item.name, time: item.createTime, img: item.img, size: size})
           })
           res.data.data.file.forEach(item => {
             let size;
@@ -137,7 +134,7 @@ this.init()
                 size = (item.size / 1024 / 1024 / 1024).toFixed(2) + 'GB';
               }
             }
-            this.tableData.push({name: item.name, time: item.mtime, img: item.img, size: size})
+            this.tableData.push({name: item.name, time: item.createTime, img: item.img, size: size})
           })
         })
       },
@@ -165,12 +162,11 @@ this.init()
         let fd = new FormData();
         fd.append('file',file);//传文件
         // fd.append('sign',this.$sign);//传其他参数
-        fd.append('username',localStorage.getItem('name'));//传其他参数
-        fd.append('path',localStorage.getItem('path'));//传其他参数
+        // fd.append('username',localStorage.getItem('name'));//传其他参数
+        // fd.append('path',localStorage.getItem('path'));//传其他参数
         const that = this;
-        this.$http.post(this.$HOST+'v2/upload',fd).then(res=>{
-
-         if(res.data.code=='0'){
+        this.postRequest('/netDisk/upload',fd).then(res=>{
+         if(res.data.code=='200'){
            this.dialogVisible=false
            that.tableData=[]
            that.$message({
@@ -198,12 +194,12 @@ this.init()
           type: 'warning'
         }).then(() => {
           this.tableData.splice(index,1)
-          this.$http.post(this.$HOST+'v2/delfile',this.$qs.stringify({
+          this.postRequest('/netDisk/delfile',{
             sign:this.$sign,
             name:localStorage.getItem('path')+name,
             username:this.username
-          })).then(res=>{
-            if(res.data.code==0){
+          }).then(res=>{
+            if(res.data.code==200){
               this.$message({
                 type: 'success',
                 message: '删除成功!'
@@ -227,16 +223,16 @@ this.init()
 
       },
       download(name){
-        window.location.href=this.$HOST+'v2/download?username='+this.username+'&name='+name
+        window.location.href=this.$HOST+'netDisk/download?username='+this.username+'&name='+name
       },
       newfolder(){
-        this.$http.post(this.$HOST+'v2/newfolder',this.$qs.stringify({
-          sign:this.$sign,
-          username:this.username,
+        this.postRequest('netDisk/newfolder', {
+          // sign:this.$sign,
+          // username:this.username,
           path:localStorage.getItem('path'),
           fname:this.input
-        })).then(res=>{
-            if(res.data.code==0){
+        }).then(res=>{
+            if(res.data.code==200){
               this.addfolder=false
               this.input=''
 
@@ -267,14 +263,14 @@ this.init()
         })
       },
       next(name)  {
-        var newpath=localStorage.getItem('path')+name+'/'
+        const newpath = localStorage.getItem('path') + name + '/';
         this.path=newpath
-        this.$http.post(this.$HOST + 'v2/filelist', this.$qs.stringify({
-          sign: this.$sign,
-          username:localStorage.getItem('name'),
+        this.postRequest('/netDisk/filelist', {
+          // sign: this.$sign,
+          // username:localStorage.getItem('name'),
           path:newpath
-
-        })).then(res => {
+        }).then(res => {
+          debugger
           localStorage.setItem('path',newpath)
           this.tableData=[]
           res.data.data.dir.forEach(item => {
@@ -290,7 +286,7 @@ this.init()
                 size = (item.size / 1024 / 1024 / 1024).toFixed(2) + 'GB';
               }
             }
-            this.tableData.push({name: item.name, time: item.mtime, img: item.img, size: size})
+            this.tableData.push({name: item.name, time: item.createTime, img: item.img, size: size})
           })
           res.data.data.file.forEach(item => {
             let size;
@@ -305,7 +301,7 @@ this.init()
                 size = (item.size / 1024 / 1024 / 1024).toFixed(2) + 'GB';
               }
             }
-            this.tableData.push({name: item.name, time: item.mtime, img: item.img, size: size})
+            this.tableData.push({name: item.name, time: item.createTime, img: item.img, size: size})
           })
         })
 
@@ -313,21 +309,20 @@ this.init()
       },
       back(){
        // console.log( localStorage.getItem('path').split('/'))
-        var str=localStorage.getItem('path').split('/')
+        const str = localStorage.getItem('path').split('/');
         str.splice(0,1)
         str.splice(str.length-1,1)
         str.splice(str.length-1,1)
-        var backpath='/'
+        let backpath = '/';
         str.forEach(item=>{
           backpath+=item+'/'
         })
         this.path=backpath
-        this.$http.post(this.$HOST + 'v2/filelist', this.$qs.stringify({
-          sign: this.$sign,
-          username:localStorage.getItem('name'),
+        this.postRequest('/netDisk/filelist', {
+          // sign: this.$sign,
+          // username:localStorage.getItem('name'),
           path:backpath
-
-        })).then(res => {
+        }).then(res => {
           localStorage.setItem('path',backpath)
           this.tableData=[]
           res.data.data.dir.forEach(item => {
@@ -343,7 +338,7 @@ this.init()
                 size = (item.size / 1024 / 1024 / 1024).toFixed(2) + 'GB';
               }
             }
-            this.tableData.push({name: item.name, time: item.mtime, img: item.img, size: size})
+            this.tableData.push({name: item.name, time: item.createTime, img: item.img, size: size})
           })
           res.data.data.file.forEach(item => {
             let size;
@@ -358,7 +353,7 @@ this.init()
                 size = (item.size / 1024 / 1024 / 1024).toFixed(2) + 'GB';
               }
             }
-            this.tableData.push({name: item.name, time: item.mtime, img: item.img, size: size})
+            this.tableData.push({name: item.name, time: item.createTime, img: item.img, size: size})
           })
         })
 

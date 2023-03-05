@@ -2,14 +2,14 @@
   <el-container>
     <el-header>
   <el-menu
-    default-active="2"
+    default-active="1"
     class="el-menu-vertical-demo"
  >
-    <el-menu-item index="2">
+    <el-menu-item index="1">
       <i class="el-icon-tickets"></i>
       <span slot="title">全部文件</span>
     </el-menu-item>
-    <el-menu-item index="3" class="item">
+    <el-menu-item index="2" class="item">
       <i class="el-icon-picture-outline"></i>
       <span slot="title">图片</span>
     </el-menu-item>
@@ -17,15 +17,15 @@
       <i class="el-icon-document"></i>
       <span slot="title" class="item">文档</span>
     </el-menu-item>
-    <el-menu-item index="3">
+    <el-menu-item index="4">
       <i class="el-icon-video-play"></i>
       <span slot="title" class="item">视频</span>
     </el-menu-item>
-    <el-menu-item index="3">
+    <el-menu-item index="5">
       <i class="el-icon-mic"></i>
       <span slot="title" class="item">音乐</span>
     </el-menu-item>
-    <el-menu-item index="3">
+    <el-menu-item index="6">
       <i class="el-icon-more"></i>
       <span slot="title" class="item">其他</span>
     </el-menu-item>
@@ -52,18 +52,17 @@
           }
       },
       created(){
-        this.$http.post(this.$HOST+'v2/getusesize',this.$qs.stringify({
+        this.$axios.post(this.$HOST+'v2/getusesize',this.$qs.stringify({
           sign:this.$sign
         })).then(res=>{
-          var MB=524288000;
-         var  persent=parseInt(res.data.data.size/MB)
+          const MB = 524288000;
+          const persent = parseInt(res.data.data.size / MB);
           if(persent==0){
             this.use=1
           }else{
             this.use=persent
           }
-this.usesize=res.data.data.realsize
-
+          this.usesize=res.data.data.realsize
         })
       },
       methods:{
@@ -79,10 +78,10 @@ this.usesize=res.data.data.realsize
   /*text-align: center;*/
 
 }
-  .item{
-    color:#424e67;
-    font-size: 14px;
-  }
+.item{
+  color:#424e67;
+  font-size: 14px;
+}
 .el-progress-bar__outer{
 
 }
