@@ -93,12 +93,9 @@ export default {
       console.log(info)
       this.$refs.vueUnityWebgl.message('JsTalker', 'toUnityWebgl', message)
     },
+    // eslint-disable-next-line no-unused-vars
     cellClassName({row, column, rowIndex, columnIndex}) {
-      console.log(row);
-      console.log(column);
-      console.log(rowIndex);
-      console.log(columnIndex);
-      return "green";
+      return "gray";
     }
   }
 }

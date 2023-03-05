@@ -13,6 +13,7 @@ const myself = r => require.ensure([], () => r(require('@/pages/me')), 'myBooksh
 
 // 精品页
 const homeIndex = r => require.ensure([], () => r(require('@/pages/home/index')), 'homeIndex');
+const netDisk = r => require.ensure([], () => r(require('@/views/netDisk/netDisk.vue')), 'netDisk');
 const chat = r => require.ensure([], () => r(require('@/components/chat/index')), 'chat');
 const chat2 = r => require.ensure([], () => r(require('@/components/chat/index2')), 'chat2');
 const loading = r => require.ensure([], () => r(require('@/components/loading/index')), 'loading');
@@ -67,6 +68,14 @@ const routes = [
         path: '/home',
         name: 'Home',
         component: Home,
+        meta: {                 //加一个自定义obj
+            requireAuth:true    //这个参数 true 代表需要登录才能进入
+        }
+    },
+    {
+        path: '/netDisk',
+        name: 'netDisk',
+        component: netDisk,
         meta: {                 //加一个自定义obj
             requireAuth:true    //这个参数 true 代表需要登录才能进入
         }
