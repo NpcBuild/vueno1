@@ -1,9 +1,17 @@
 // import qs from "querystring";
 // import {compile} from "vue-template-compiler";
-import  axios from 'axios';
+import  axios from '../axios';
 import router from '../router'
 import db from '../store/sessionStorage'
 import * as common from './common'
+
+let header = {
+    'content-type': 'application/json;charset=UTF-8',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
+    'X-Powered-By':' 3.2.1',
+    'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
+}
 
 //请求结果拦截
 axios.interceptors.response.use(success => {
@@ -56,7 +64,7 @@ export const postRequest = (url, params, headers) => {
         method: 'post',
         url: `${base}${url}`,
         data: params,
-        headers: headers
+        headers: headers?headers:header
     })
 }
 export const putRequest = (url, params) => {
@@ -74,7 +82,7 @@ export const getRequest = (url, params, headers) => {
         method: 'get',
         url: apiUrl,
         data: params,
-        headers: headers
+        headers: headers?headers:header
     })
 }
 export const deleteRequest = (url, params) => {

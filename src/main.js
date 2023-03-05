@@ -3,11 +3,14 @@ import App from './App.vue'
 import router from "@/router";
 import store from "./store";
 import "./assets/css/common.css"
-import axios from "axios";
-Vue.prototype.$axios = axios //全局使用
+import './assets/css/global.css'//导入全局样式表
+import request from "./axios";
+Vue.prototype.$axios = request //全局使用
 
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+
+// Vue.config.productionTip = false
 
 //背景
 // import VueParticles from "vue-particles";

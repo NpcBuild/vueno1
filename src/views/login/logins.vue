@@ -114,17 +114,10 @@ export default {
           this.postRequest('/login', {
             account: _this.loginForm.user,
             userPwd: _this.loginForm.pass,
-          }, {
-            'content-type': 'application/json;charset=UTF-8',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
-            'X-Powered-By':' 3.2.1',
-            'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
           }).then(res => {
-
             // eslint-disable-next-line no-debugger
             debugger
-            if (res.code == "0"){
+            if (res.code == "200"){
               _this.$message.success(res.message);
               //登录成功后，token保存到客户端的sessionStorage中
               //项目中其他的API接口，必须在登录之后才能访问，记录token就是为了当我们访问有权限的接口时可以提供身份认证信息
@@ -153,12 +146,6 @@ export default {
         account: _this.registForm.user,
         userPwd: _this.registForm.pass,
         phone: _this.registForm.phone,
-      }, {
-        'content-type': 'application/json;charset=UTF-8',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
-        'X-Powered-By':' 3.2.1',
-        'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
       }).then(res => {
         // eslint-disable-next-line no-debugger
         debugger

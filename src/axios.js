@@ -3,7 +3,7 @@ import router from "@/router";
 import Element from "element-ui"
 // import store from "@/store";
 
-axios.defaults.baseURL = "http://localhost:8082"
+axios.defaults.baseURL = "http://localhost:1314"
 
 //前后置拦截
 
@@ -26,7 +26,7 @@ request.interceptors.request.use(config => {
 //请求结果拦截
 request.interceptors.response.use(response => {
     let res = response.data
-
+    debugger
     if (res.code === 200) {
         return response
     } else {
@@ -38,7 +38,6 @@ request.interceptors.response.use(response => {
             error.massage = error.response.data.msg
         }
         if (error.response.status === 401) {
-
             router.push("/Login")
         }
 
