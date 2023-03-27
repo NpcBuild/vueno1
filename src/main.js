@@ -10,8 +10,6 @@ Vue.prototype.$axios = request //全局使用
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
-// Vue.config.productionTip = false
-
 //背景
 // import VueParticles from "vue-particles";
 // Vue.use(VueParticles);
@@ -20,6 +18,9 @@ import 'element-ui/lib/theme-chalk/index.css';
 import VueIntro from 'vue-introjs';
 import 'intro.js/introjs.css';
 Vue.use(VueIntro);
+
+// import {drag} from "@/utils/directives";
+// Vue.use(drag)
 
 // 引入antd
 // import Antd from 'ant-design-vue';
@@ -34,6 +35,10 @@ import moment from 'moment'//导入文件
 Vue.prototype.$moment = moment;//赋值使用
 
 Vue.use(ElementUI);
+
+// 断点续传等
+import uploader from 'vue-simple-uploader'
+Vue.use(uploader)
 
 Vue.config.productionTip = false
 import {getRequest,postRequest} from "./utils/request"
@@ -51,6 +56,8 @@ Vue.directive('drag',{
   }
 })
 
+
+// 路由导航守卫控制访问权限
 // router.beforeEach((to,from,next) => {
 //   store.commit('GET_TOKEN')
 //   const token = store.state.token

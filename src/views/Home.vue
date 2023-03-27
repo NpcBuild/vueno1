@@ -85,7 +85,7 @@
 <!--        </li>-->
 <!--      </ul>-->
     </nav>
-    <FloatBall v-drag :text="'头像'"></FloatBall>
+    <NPC></NPC>
   </div>
 </template>
 
@@ -96,8 +96,8 @@ import Header from "@/components/Header";
 // import Info from "@/components/Info";
 import Carousel from "@/components/Carousel";
 import Calendar from "@/components/Calendar";
-import FloatBall from '@/components/FloatBall';
-import VideoPlayer from "@/components/videoPlayer";
+import VideoPlayer from "@/components/videoPlayer/video2.vue";
+import NPC from "@/components/NPC/NPC.vue";
 
 
 // let scrollContent = document.getElementById("home");
@@ -118,65 +118,26 @@ export default {
       Info: {
         content:"",
         source:"",
-      }
+      },
+      message: '1'
     }
   },
   components: {
+    NPC,
     VideoPlayer,
     Header,
     // RollingBarrage,
     // Info,
     Carousel,
     Calendar,
-    FloatBall
-  },
-  directives: {
-    //v-drag实现拖拽
-    drag: {
-      // 指令的定义
-      bind: function(el) {
-        let oDiv = el;  // 获取当前元素
-        oDiv.onmousedown = (e) => {
-          // 算出鼠标相对元素的位置
-          let disX = e.clientX - oDiv.offsetLeft;
-          let disY = e.clientY - oDiv.offsetTop;
-
-          document.onmousemove = (e) => {
-            // 用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
-            let left = e.clientX - disX;
-            let top = e.clientY - disY;
-
-            oDiv.style.left = left + 'px';
-            oDiv.style.top = top + 'px';
-          };
-
-          document.onmouseup = (e) => {
-            document.onmousemove = null;
-            document.onmouseup = null;
-            console.log(e)
-          }
-        }
-      },
-      /*阻止拖拽*/
-      stopdrag: {
-        inserted: function(el, binding, vnode) {
-          let element = el;
-          element.onmousedown = function(e) {
-            e.stopPropagation()
-          }
-          console.log(binding)
-          console.log(vnode)
-        }
-      }
-    }
   },
   mounted() {
     api.getPyqwenan({
       key:"9926be2444c935728b45d5e4b6f50da0"
     }).then(res =>{
-      console.log(res)
-      // eslint-disable-next-line no-debugger
+      res = res.data
       debugger
+      console.log(res)
       if (res.code == 200){
         this.Info.content = res.newslist[0].content
         this.Info.source = res.newslist[0].source
@@ -184,12 +145,12 @@ export default {
       }
       console.log(res.newslist[0].content)
       console.log(res.newslist[0].source)
+      this.speaks()
     }).catch((error) => {
       console.log(error)
     })
   },
   methods: {
-
     //滚动弹幕
     createVideoBulletChatDom(value){//将输入框的值插入到弹幕中
       let scrollContent = document.getElementById("home");
@@ -220,7 +181,12 @@ export default {
         }
       },50)
     },
-  }
+    speaks() {
+      let synth = window.speechSynthesis
+      let utterance = new SpeechSynthesisUtterance(this.Info.content)
+      synth.speak(utterance)
+    }
+  },
 }
 </script>
 <style>

@@ -1,8 +1,10 @@
 const webpack = require('webpack');
+const path = require('path');
 module.exports = {
     "transpileDependencies": [
         "vuetify"
     ],
+    // assetsDir: 'static',
     publicPath: './',
     devServer: {
         port: 9000,
@@ -30,6 +32,25 @@ module.exports = {
             // other modules
             introJs: ['intro.js'],
         }])
+
+        config.plugins.delete('preload')
+        config.plugins.delete('prefetch')
+
+        const svgRule = config.module.rule('svg')  // 找到svg-loader
+        svgRule.uses.clear() // 清除已有的loader，不这样做会添加到此loader之后，svg-sprite-loader不会生效
+        svgRule.exclude.add(/node_modules/)   // 正则匹配排除node_modules目录
+        svgRule
+            .rule('icons')
+            .test(/\.svg$/)
+            .include.add(path.resolve('src/assets/static/img'))
+            .end()
+            .use('svg-sprite-loader')
+            .loader('svg-sprite-loader')
+            .options({
+                symbolId: 'icon-[name]',
+            })
+            .end()
+
         config.module.rule('images')
             .use('url-loader')
             .tap(
@@ -40,5 +61,12 @@ module.exports = {
                     limit: 0,
                     esModule: false,
                 }))
-    }
+    },
+    // configureWebpack: {
+    //     resolve: {
+    //         alias: {
+    //             '@': path.resolve(__dirname, 'src')
+    //         }
+    //     }
+    // }
 }

@@ -2,16 +2,16 @@
   <transition>
     <div ref="dragIcon"
          class="dragIcon"
+         @mouseenter="onHover"
+         @mouseleave="onLeave"
 
          @touchstart.stop="handleTouchStart"
          @touchmove.prevent.stop="handleTouchMove($event)"
          @touchend.stop="handleTouchEnd"
-
-         :style="{left: left + 'px',top: top + 'px',width: itemWidth + 'px',height: itemHeight + 'px'}"
+         :style="{left: left + 'px',top: top + 'px',width: localItemWidth + 'px',height: localItemHeight + 'px',backgroundImage: backgroundImages ,backgroundSize: 'cover'}"
          v-text="text"
          @click="click"
          v-if="isShow">
-      {{text}}
     </div>
   </transition>
 </template>
@@ -24,7 +24,8 @@ export default {
       default: '球'
     },
     click: {
-
+      type: Function,
+      default: function () {console.log("点击了悬浮球")}
     },
     itemWidth: {
       type: Number,
@@ -45,11 +46,17 @@ export default {
       currentTop: null,
       clientW: document.documentElement.clientWidth,//视口宽
       clientH: document.documentElement.clientHeight,//视口高
+      backgroundImages: 'url(' + require('@/assets/images/Leah.gif') + ')',
+
+      localItemWidth: this.itemWidth,
+      localItemHeight: this.itemHeight,
     }
   },
   created () {
     this.left = (this.clientW - this.itemWidth - 30)
     this.top = (this.clientH/2 - this.itemHeight/2)
+    this.localItemWidth = this.itemWidth
+    this.localItemHeight = this.itemHeight
   },
   mounted() {
     this.bindScrollEvent()
@@ -59,6 +66,14 @@ export default {
     this.removeScrollEvent()
   },
   methods: {
+    onHover() {
+      this.localItemWidth = 150
+      this.localItemHeight = 150
+    },
+    onLeave() {
+      this.localItemWidth = 50
+      this.localItemHeight = 50
+    },
     handleTouchStart() {
       // eslint-disable-next-line no-debugger
       debugger
@@ -104,14 +119,12 @@ export default {
       window.removeEventListener('scroll',this.handleScrollStart)
     },
     handleScrollStart() {
-      // eslint-disable-next-line no-debugger
-      debugger
-      this.isShow = false
-      this.timer && clearTimeout(this.timer)
-      this.timer = setTimeout(() => {
-        this.handleScrollEnd()
-      },300)
-      this.currentTop = document.documentElement.scrollTop || document.body.scrollTop
+      // this.isShow = false
+      // this.timer && clearTimeout(this.timer)
+      // this.timer = setTimeout(() => {
+      //   this.handleScrollEnd()
+      // },300)
+      // this.currentTop = document.documentElement.scrollTop || document.body.scrollTop
     },
     handleScrollEnd() {
       this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop
@@ -119,12 +132,12 @@ export default {
       if(this.scrollTop == this.currentTop) {
         this.isShow = true
       }
-    }
-  },
+    },
+  }
 }
 </script>
 
-<style scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
 transition {
   border-radius: 50%;
   overflow: hidden;
