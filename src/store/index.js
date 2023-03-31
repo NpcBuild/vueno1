@@ -21,6 +21,9 @@ const store =  new Vuex.Store({
         GET_TOKEN: (state) => {
             state.token = state.token || localStorage.getItem("token1")
         },
+        init(state){
+            state.list=[]
+        }
     },
     action: {},
     modules: {}

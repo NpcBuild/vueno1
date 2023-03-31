@@ -107,7 +107,7 @@ export default {
       login_box.classList.remove('hidden');
     },
     submitForm(loginForm) {
-      // this.$refs[loginForm].validate((valid,invalidFields)=>{
+      // this.$refs[loginForm].validate(async (valid,invalidFields)=>{
       //   console.log("valid:"+valid+invalidFields);
       //   if (valid) {
           let _this = this;

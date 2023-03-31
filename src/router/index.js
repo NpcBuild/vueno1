@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home'
+import Admin from '../views/admin/admin.vue'
 import Login from '../views/login/Login'
 import logins from '../views/login/logins'
 import socket from '../views/socket/socket'
@@ -22,6 +23,10 @@ const pagination = r => require.ensure([], () => r(require('@/components/paginat
 const test = r => require.ensure([], () => r(require('@/components/test/index')), 'test');
 const test2 = r => require.ensure([], () => r(require('@/components/test2/index')), 'test2');
 const voice = r => require.ensure([], () => r(require('@/components/voice/index')), 'voice');
+const video = r => require.ensure([], () => r(require('@/components/videoPlayer/videoPlayer')), 'video');
+const video2 = r => require.ensure([], () => r(require('@/components/videoPlayer/video2.vue')), 'video2');
+const test3 = r => require.ensure([], () => r(require('@/components/emoji/smileyPreloader.vue')), 'test3');
+const test4 = r => require.ensure([], () => r(require('@/components/videoPlayer/videoTest.vue')), 'test4');
 
 const routes = [
     {
@@ -68,6 +73,14 @@ const routes = [
         path: '/home',
         name: 'Home',
         component: Home,
+        meta: {                 //加一个自定义obj
+            requireAuth:true    //这个参数 true 代表需要登录才能进入
+        }
+    },
+    {
+        path: '/admin',
+        name: 'Admin',
+        component: Admin,
         meta: {                 //加一个自定义obj
             requireAuth:true    //这个参数 true 代表需要登录才能进入
         }
@@ -133,7 +146,27 @@ const routes = [
         path: '/voice',
         name: 'voice',
         component: voice
-    }
+    },
+    {
+        path: '/video',
+        name: 'video',
+        component: video
+    },
+    {
+        path: '/video2',
+        name: 'video2',
+        component: video2
+    },
+    {
+        path: '/test3',
+        name: 'test3',
+        component: test3
+    },
+    {
+        path: '/test4',
+        name: 'test4',
+        component: test4
+    },
 ]
 
 const router = new VueRouter({

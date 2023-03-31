@@ -19,21 +19,63 @@
     >
       <span @click="mess">更改头像</span>
     </el-drawer>
+    <span>未读消息：</span>
+    <el-badge :value="messageCount" class="notification-badge">
+      <el-icon name="bell" class="notification-icon"></el-icon>
+    </el-badge>
   </div>
 </template>
 
 <script>
+// let source = null;
+// let userId = 1314
+// if (window.EventSource) {
+//   // 建立连接
+//   source = new EventSource('http://localhost:1314/sse/sub/' + userId);
+//   console.log(userId,"userId")
+//   // setMessageInnerHTML("连接用户=" + userId);
+//   /**
+//    * 连接一旦建立，就会触发open事件
+//    * 另一种写法：source.onopen = function (event) {}
+//    */
+//   source.addEventListener('open', function (e) {
+//     console.log("建立连接。。。",e)
+//     // setMessageInnerHTML("建立连接。。。");
+//   }, false);
+//   /**
+//    * 客户端收到服务器发来的数据
+//    * 另一种写法：source.onmessage = function (event) {}
+//    */
+//   source.addEventListener('message', function (e) {
+//     console.log(e.data,"e.data")
+//     // setMessageInnerHTML(e.data);
+//   });
+// } else {
+//   // setMessageInnerHTML("你的浏览器不支持SSE");
+// }
 export default {
   data() {
     return {
       drawer: false,
       direction: 'rtl',
+      messageCount: 0, // 消息数
     }
   },
   mounted() {
     console.debug('我进来了')
     // 调用，要等所有加载完毕以后在触发,引导提示
     // this.setGuide()
+
+
+    // 获取消息数
+    // 创建 EventSource 对象连接到 /messages 路由
+    const eventSource = new EventSource('http://localhost:1314/messages');
+    // 当接收到消息时更新界面上的消息计数器
+    eventSource.addEventListener('message', event => {
+      console.log("see",event)
+      this.messageCount++;
+    });
+
   },
   methods: {
     getUserInfo() {
@@ -135,5 +177,16 @@ export default {
   /*}*/
   .main {
     background-color: #42b983;
+  }
+
+  .notification-badge .el-badge__content {
+    background-color: red;
+    color: #fff;
+    float: right;
+    margin-right: 20px;
+  }
+
+  .notification-icon {
+    font-size: 24px;
   }
 </style>

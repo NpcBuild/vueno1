@@ -2,8 +2,8 @@
   <div id="container">
     <video id="background_video" width="1000px" controls >
       抱歉，您的浏览器不支持内嵌视频
-      <source src="../assets/video/痛苦度过一生.mp4" type='video/mp4'>
-      <source src="../assets/video/fuli.mp4" type='video/mp4'>
+      <source src="../../assets/video/痛苦度过一生.mp4" type='video/mp4'>
+      <source src="../../assets/video/fuli.mp4" type='video/mp4'>
     </video>
     <!-- #video_cover 是默认的视频封面 -->
     <div id="video_cover"></div>
