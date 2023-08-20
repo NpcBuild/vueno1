@@ -39,6 +39,7 @@
         <p>扫码登录</p>
 <!--        <img src="https://qcloudtest-1258517105.cos.ap-guangzhou.myqcloud.com/IMG_1932.PNG" alt="">-->
         <img :src="imgBase" alt="">
+<!--        <div class="qrCodeImg-box" id="qrImgDiv"></div>-->
         <div class="social-media">
           <a href="#" class="social-icon">
             <i class="el-icon-eleme"></i>
@@ -72,23 +73,69 @@ export default {
         pass:'',
         confirmPass:'',
       },
-      imgBase: '' //存图片字节流
+      imgBase: '', //存图片字节流
+      s: null,
     }
   },
   mounted() {
     this.qrCode();
   },
+  destroyed () {
+    this.ws.close() // 页面销毁后断开websocket连接
+  },
   methods: {
     qrCode() {
-      this.getRequest('/qrCode', {}, {
-        'content-type': 'application/json;charset=UTF-8',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
-        'X-Powered-By':' 3.2.1',
-        'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
-      }).then(res => {
-        this.imgBase = 'data:image/jpeg;base64,' + res.data;
+      this.getRequest('/qrCode',{userId: 1}).then(res => {
+        console.log(res)
+        this.imgBase = 'data:image/jpeg;base64,' + res.data.img;
+        this.initWebSocket(res.data.uuid)
       })
+      // this.getRequest('/loginQrCode').then(res => {
+      //   console.log(res)
+      // })
+    },
+    initWebSocket(uuid) {
+      console.log('初始化WebSocket链接中……',uuid)
+      var that = this
+      if (!window.WebSocket) {
+        // 不支持的情况
+        window.WebSocket = window.MozWebSocket;
+      }
+      if (window.WebSocket) {
+        this.ws = new WebSocket("ws://127.0.0.1:12345/socket?uid="+uuid);
+        this.ws.onopen = function (event) {
+          console.log(event);
+          console.log('WebSocket链接成功');
+        };
+        this.ws.onmessage = function (event) {
+          let data = event.data;
+          console.log(event.data);
+          try {
+            data = JSON.parse(event.data)
+          } catch (e) {
+            console.log(e)
+          }
+          if (data) {
+            that.loginResult(data)
+            console.log('登录成功')
+            this.ws.close()
+          } else {
+            // 如果过期了，关闭链接、重置链接、刷新二维码
+            this.ws.close()
+            this.qrCode()
+          }
+        };
+        this.ws.onerror = function (event) {
+          console.log(event)
+          console.log('WebSocket链接失败')
+        };
+        this.ws.onclose = function (event) {
+          console.log(event);
+          console.log('WebSocket服关闭');
+        };
+      } else {
+        alert("您的浏览器不支持WebSocket协议！");
+      }
     },
     goToRegister() {
       let form_box = document.getElementsByClassName("form-box")[0];
@@ -106,39 +153,41 @@ export default {
       register_box.classList.add('hidden');
       login_box.classList.remove('hidden');
     },
-    submitForm(loginForm) {
+    submitForm() {
       // this.$refs[loginForm].validate(async (valid,invalidFields)=>{
       //   console.log("valid:"+valid+invalidFields);
       //   if (valid) {
-          let _this = this;
+      let _this = this;
           this.postRequest('/login', {
             account: _this.loginForm.user,
             userPwd: _this.loginForm.pass,
           }).then(res => {
-            // eslint-disable-next-line no-debugger
-            debugger
-            if (res.code == "200"){
-              _this.$message.success(res.message);
-              //登录成功后，token保存到客户端的sessionStorage中
-              //项目中其他的API接口，必须在登录之后才能访问，记录token就是为了当我们访问有权限的接口时可以提供身份认证信息
-              //token只应在当前网站打开期间生效，所以将token保存在sessionStorage中
-              window.sessionStorage.setItem("token",res.code);
-
-              this.$store.commit('SET_TOKEN',res.code)
-
-              //
-              // const jwt = res.headers['authorization']
-              // this.$store.commit('SET_TOKEN',jwt)
-
-              //通过编程式导航跳转到首页，路由地址是/home
-              this.$router.push("/home");
-            }else {
-              _this.$message.error(res.message);
-            }
-            console.log(loginForm);
+            this.loginResult(res)
           })
         // }
       // })
+    },
+    loginResult(res) {
+      let _this = this;
+      // eslint-disable-next-line no-debugger
+      if (res.code == "200"){
+        _this.$message.success(res.message);
+        //登录成功后，token保存到客户端的sessionStorage中
+        //项目中其他的API接口，必须在登录之后才能访问，记录token就是为了当我们访问有权限的接口时可以提供身份认证信息
+        //token只应在当前网站打开期间生效，所以将token保存在sessionStorage中
+        window.sessionStorage.setItem("token",res.code);
+
+        this.$store.commit('SET_TOKEN',res.code)
+
+        //
+        // const jwt = res.headers['authorization']
+        // this.$store.commit('SET_TOKEN',jwt)
+
+        //通过编程式导航跳转到首页，路由地址是/home
+        this.$router.push("/home");
+      }else {
+        _this.$message.error(res.message);
+      }
     },
     regist(registForm) {
       let _this = this;

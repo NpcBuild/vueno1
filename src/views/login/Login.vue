@@ -143,8 +143,6 @@ export default {
       //   console.log(res);
       //   console.log(formName);
       // })
-      // eslint-disable-next-line no-debugger
-      debugger
       this.getRequest('/login', {}, {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
@@ -152,8 +150,6 @@ export default {
                 'X-Powered-By':' 3.2.1',
                 'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
               }).then(res => {
-        // eslint-disable-next-line no-debugger
-                debugger
         this.modss = res;
         console.log(formName);
       })
