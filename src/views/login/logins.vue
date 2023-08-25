@@ -44,8 +44,8 @@
           <a href="#" class="social-icon">
             <i class="el-icon-eleme"></i>
           </a>
-          <a href="#" class="social-icon">
-            <i class="el-icon-loading"></i>
+          <a href="http://localhost:1314/authorize" class="social-icon">
+            <i class="el-icon-c-scale-to-original"></i>
           </a>
           <a href="#" class="social-icon">
             <i class="el-icon-share"></i>
@@ -168,10 +168,8 @@ export default {
       // })
     },
     loginResult(res) {
-      let _this = this;
-      // eslint-disable-next-line no-debugger
       if (res.code == "200"){
-        _this.$message.success(res.message);
+        this.$message.success(res.message);
         //登录成功后，token保存到客户端的sessionStorage中
         //项目中其他的API接口，必须在登录之后才能访问，记录token就是为了当我们访问有权限的接口时可以提供身份认证信息
         //token只应在当前网站打开期间生效，所以将token保存在sessionStorage中
@@ -186,7 +184,7 @@ export default {
         //通过编程式导航跳转到首页，路由地址是/home
         this.$router.push("/home");
       }else {
-        _this.$message.error(res.message);
+        this.$message.error(res.message);
       }
     },
     regist(registForm) {
