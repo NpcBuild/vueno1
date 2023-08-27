@@ -14,8 +14,6 @@ const store =  new Vuex.Store({
     },
     mutations: {
         SET_TOKEN: (state,token) => {
-            // eslint-disable-next-line no-debugger
-            debugger
             state.token = token
             localStorage.setItem("token1", token)
         },

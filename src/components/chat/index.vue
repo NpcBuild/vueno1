@@ -110,7 +110,10 @@ export default {
         this.ws = new WebSocket("ws://127.0.0.1:12345/socket?uid=" + token);
         this.ws.onmessage = function (event) {
           // console.log(JSON.parse(event.data));
-          console.log(event.data);
+          console.log('收到消息：' + event.data);
+          // 实时更新
+          that.changeChat(that.activeId)
+          that.getMessageList()
         };
         this.ws.onerror = function (event) {
           console.log(event)
@@ -153,13 +156,14 @@ export default {
       // this.clickEmoji();
     },
     sendMessage() {
+      var that = this
       if (!this.messageInput) {return;}
       if (!window.WebSocket) {return;}
       if (this.ws.readyState == WebSocket.OPEN) {
-        this.messages.push({id: null, type: "text", text: this.messageInput, time: Date.parse(new Date()), me: true, read: false})
         // this.ws.send(this.form.uid+':'+this.form.message);
-        this.getRequest('/socket/'+`${this.activeId}`,{message:this.messageInput}).then(res => {
-          console.log(res)
+        this.getRequest('/socket/'+`${this.activeId}`,{message:this.messageInput}).then(() => {
+          that.changeChat(that.activeId)
+          that.getMessageList()
           this.messageInput = ''
           this.redirectScrollBottom()
         })

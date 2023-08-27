@@ -7,7 +7,7 @@
       </span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item command="login">登录</el-dropdown-item>
-        <el-dropdown-item command="b">狮子头</el-dropdown-item>
+        <el-dropdown-item command="b">聊天</el-dropdown-item>
         <el-dropdown-item command="about">关于</el-dropdown-item>
         <el-dropdown-item command="logOut" divided>退出</el-dropdown-item>
       </el-dropdown-menu>
@@ -19,7 +19,7 @@
     >
       <span @click="mess">更改头像</span>
     </el-drawer>
-    <span>未读消息：</span>
+    <span>系统消息：</span>
     <el-badge :value="messageCount" class="notification-badge">
       <el-icon name="bell" class="notification-icon"></el-icon>
     </el-badge>
@@ -88,7 +88,7 @@ export default {
       if (command=="login") {
         this.$router.push("/login");
       } else if (command=="b") {
-        this.$router.push("/home");
+        this.$router.push("/chat");
       } else if (command=="about") {
         this.$router.push("/about");
       } else if (command=="logOut") {
