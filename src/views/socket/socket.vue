@@ -69,13 +69,7 @@ export default {
       if (!window.WebSocket) {return;}
       if (socket.readyState == WebSocket.OPEN) {
         // socket.send(this.form.uid+':'+this.form.message);
-        this.getRequest('/socket/yf',{},{
-          'content-type': 'application/json;charset=UTF-8',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
-          'X-Powered-By':' 3.2.1',
-          'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
-        })
+        this.getRequest('/socket/yf')
       } else {
         alert("WebSocket 连接没有成功建立！");
       }

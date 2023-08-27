@@ -158,13 +158,7 @@ export default {
       if (this.ws.readyState == WebSocket.OPEN) {
         this.messages.push({id: null, type: "text", text: this.messageInput, time: Date.parse(new Date()), me: true, read: false})
         // this.ws.send(this.form.uid+':'+this.form.message);
-        this.getRequest('/socket/'+`${this.activeId}`,{message:this.messageInput},{
-          'content-type': 'application/json;charset=UTF-8',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
-          'X-Powered-By':' 3.2.1',
-          'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
-        }).then(res => {
+        this.getRequest('/socket/'+`${this.activeId}`,{message:this.messageInput}).then(res => {
           console.log(res)
           this.messageInput = ''
           this.redirectScrollBottom()
@@ -387,7 +381,7 @@ $blue: #00b0ff;
           font-size: 14px;
           display: inline-block;
           overflow: hidden !important;
-          width: 70%;
+          width: 78%;
           white-space: nowrap;
           text-overflow: ellipsis;
           color: $grey;

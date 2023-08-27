@@ -25,11 +25,8 @@ export function yfTimestampToTime(timestamp) {
     var now = new Date()
     if (date.getFullYear() === now.getFullYear()) {
         dateStr = dateStr.slice(5)
-        if (date.getMonth() === now.getMonth()) {
-            dateStr = dateStr.slice(3)
-            if (date.getDate() === now.getDate()) {
-                dateStr = dateStr.slice(3)
-            }
+        if (date.getMonth() === now.getMonth() && date.getDate() === now.getDate()) {
+            dateStr = dateStr.slice(6)
         }
     }
     return dateStr;
