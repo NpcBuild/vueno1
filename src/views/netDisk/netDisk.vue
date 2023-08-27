@@ -2,8 +2,19 @@
   <el-container>
     <el-header><Header></Header></el-header>
     <el-container>
-      <el-aside><Left></Left></el-aside>
-      <el-main><Right></Right></el-main>
+      <el-aside><Left :selectedMenuIndex="selectedMenuIndex" @menuClick="handleMenuClick"></Left></el-aside>
+      <el-main>
+        <div v-if="selectedMenuIndex === '1'">
+          <Right></Right>
+        </div>
+        <div v-else-if="selectedMenuIndex === '2'">
+          <picture-list></picture-list>
+        </div>
+        <div v-else-if="selectedMenuIndex === '3'"></div>
+        <div v-else-if="selectedMenuIndex === '4'"></div>
+        <div v-else-if="selectedMenuIndex === '5'"></div>
+        <div v-else-if="selectedMenuIndex === '6'"></div>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -12,14 +23,16 @@
 import  Header from '../../components/Header'
 import  Right from './Right'
 import  Left from './Left'
+import PictureList from "./picture-list.vue";
 export default {
   name: "netDisk",
   data(){
     return{
-
+      selectedMenuIndex: '1' // 初始选中的菜单索引
     }
   },
   components:{
+    PictureList,
     Header,
     Right,
     Left
@@ -39,7 +52,9 @@ export default {
 
   },
   methods:{
-
+    handleMenuClick(index) {
+      this.selectedMenuIndex = index; // 更新选中的菜单索引
+    }
   }
 }
 </script>

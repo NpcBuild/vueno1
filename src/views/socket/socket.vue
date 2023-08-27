@@ -31,9 +31,13 @@ export default {
   mounted() {
     this.init()
   },
+  destroyed () {
+    window.WebSocket.close() // 页面销毁后断开websocket连接
+  },
   methods: {
     init() {
       if (!window.WebSocket) {
+        // 不支持的情况
         window.WebSocket = window.MozWebSocket;
       }
       if (window.WebSocket) {
@@ -41,6 +45,11 @@ export default {
         socket.onmessage = function (event) {
           var ta = document.getElementById('responseText');
           ta.value += event.data + "\r\n";
+          console.log(JSON.parse(event.data));
+        };
+        socket.onerror = function (event) {
+          console.log(event)
+          console.log('WebSocket连接失败')
         };
         socket.onopen = function (event) {
           var ta = document.getElementById('responseText');

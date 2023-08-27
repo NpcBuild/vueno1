@@ -111,8 +111,6 @@ export default {
       }
     },
     bindScrollEvent() {
-      // eslint-disable-next-line no-debugger
-      debugger
       window.addEventListener('scroll', this.handleScrollStart)
     },
     removeScrollEvent() {

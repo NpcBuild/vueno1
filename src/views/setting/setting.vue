@@ -1,7 +1,7 @@
 <template>
   <div class="body">
     <div class="power-switch">
-      <input type="checkbox" />
+      <input type="checkbox" v-model="state" @click="changeButton"/>
       <div class="button">
         <svg class="power-off">
           <use xlink:href="#line" class="line" />
@@ -28,7 +28,28 @@
 
 <script>
 export default {
-  name: "setting"
+  name: "setting",
+  data() {
+    return {
+      state: false
+    }
+  },
+  methods: {
+    changeButton() {
+      console.log('change', !this.state)
+      if (!this.state) {
+        // 启动
+        this.getRequest('/start',{}).then(response => {
+          console.log(response)
+        })
+      } else {
+        // 关闭
+        this.getRequest('/stop',{processId: 1}).then(response => {
+          console.log(response.data)
+        })
+      }
+    }
+  }
 }
 </script>
 

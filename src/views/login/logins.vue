@@ -90,9 +90,6 @@ export default {
         this.imgBase = 'data:image/jpeg;base64,' + res.data.img;
         this.initWebSocket(res.data.uuid)
       })
-      // this.getRequest('/loginQrCode').then(res => {
-      //   console.log(res)
-      // })
     },
     initWebSocket(uuid) {
       console.log('初始化WebSocket链接中……',uuid)
@@ -173,9 +170,9 @@ export default {
         //登录成功后，token保存到客户端的sessionStorage中
         //项目中其他的API接口，必须在登录之后才能访问，记录token就是为了当我们访问有权限的接口时可以提供身份认证信息
         //token只应在当前网站打开期间生效，所以将token保存在sessionStorage中
-        window.sessionStorage.setItem("token",res.code);
+        window.sessionStorage.setItem("token",res.data);
 
-        this.$store.commit('SET_TOKEN',res.code)
+        this.$store.commit('SET_TOKEN',res.data)
 
         //
         // const jwt = res.headers['authorization']

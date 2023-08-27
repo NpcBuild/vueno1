@@ -35,7 +35,12 @@
         </el-upload>
         <uploader></uploader>
         <uploader-css></uploader-css>
-
+        <global-uploader
+            :global="false"
+            :params="{page: 'home'}"
+            :options="{target: '/api/netDisk/upload/'}"
+            @fileAdded="fileAdded"></global-uploader>
+<!--        :options="{target: 'http://localhost:1314/netDisk/upload/'}"-->
 <!--        <div>-->
 <!--          <h1>上传文件</h1>-->
 <!--          <input type="file" ref="fileInput" @change="onFileSelected"/>-->
@@ -58,8 +63,7 @@
         返回上一级 |
       </el-button>
       <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb">
-        <el-breadcrumb-item v-for="(segment, index) in pathSegments" :key="index"><a
-            onclick="console.log('ww')">{{ segment }}</a></el-breadcrumb-item>
+        <el-breadcrumb-item v-for="(segment, index) in pathSegments" :key="index"><a @click="goto(index)">{{ segment }}</a></el-breadcrumb-item>
       </el-breadcrumb>
     </div>
 
@@ -68,7 +72,7 @@
         <!--        <template slot-scope="{row,$index}">-->
         <template slot-scope="{row}">
           <svg>
-            <use :xlink:href="'#icon-' + row.img"></use>
+            <use :xlink:href="'#icon-' + row.type"></use>
           </svg>
           <!--          <img :src="'data:image/png;base64,' + row.img" alt="" style="cursor: default;-->
           <!--            display: block;height: 35px;width: 35px;position: absolute;left:20px;top: 10px;">-->
@@ -99,9 +103,19 @@
         :direction="direction"
     >
       <div v-if="isLoading">加载中...</div>
-      <div v-else-if="!error && drawerData">
-        <img :src="'data:image/jpg;base64,' + drawerData.data" alt="" style="cursor: default;
-                    display: block;height: 350px;width: 350px;position: absolute;left:20px;top: auto;">
+      <div v-else-if="!error && row">
+        <img v-if="detail && row.type == 'image'" :src="'data:image/jpg;base64,' + row.img" alt="" style="cursor: default;
+                    display: block;height: auto;width: auto;position: absolute;left:20px;top: auto;">
+        <video-player v-else-if="detail && row.type == 'video'"
+                      style="object-fit:fill"
+                      :options="playerOptions"
+                      :playsinline="true"
+                      :x5-video-player-fullscreen="true"
+                      @pause="onPlayerPause($event)"
+                      @play="onPlayerPlay($event)"
+                      @fullscreenchange="onFullscreenChange($event)"
+                      @click="fullScreen"
+                      ref="player" />
       </div>
       <div v-else>加载失败，请重试</div>
     </el-drawer>
@@ -110,15 +124,24 @@
 </template>
 
 <script>
+import { videoPlayer } from "vue-video-player";
+import 'video.js/dist/video-js.css'
+import 'vue-video-player/src/custom-theme.css'
+import 'videojs-contrib-hls'
+// import 'videojs-flash'
+// import SWF_URL from 'videojs-swf/dist/video-js.swf'
 import uploader from "@/components/uploader/uploader.vue";
 import uploaderCss from "@/components/uploader/uploaderCss.vue";
+import globalUploader from "@/components/uploader/globalUploader.vue";
 import {mapState} from 'vuex'
 
 export default {
   name: 'Right',
   components: {
     uploader,
-    uploaderCss
+    uploaderCss,
+    globalUploader,
+    videoPlayer
   },
   data() {
     return {
@@ -128,7 +151,8 @@ export default {
       keywords: '',
       dialogVisible: false,
       loading: false,
-      path: '/',
+      paths: '/',
+      pathId: '',
       username: localStorage.getItem('name'),
       addfolder: false,
       detail: false,
@@ -137,13 +161,43 @@ export default {
       isLoading: false,
       error: false,
       drawerData: null,
+      playerOptions: {
+        // live: true,
+        sources: [{
+          withCredentials: false, // 直播是否有播放令牌，反正我是没有
+          type: 'application/x-mpegURL'
+        }],
+        autoplay: true,
+        muted: false, // 默认情况下将会消除任何音频
+        loop: true, // 是否视频一结束就重新开始
+        controls: true,
+        fluid: true, // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
+        aspectRatio: '16:9', // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值。值应该代表一个比例 - 用冒号分隔的两个数字（例如"16:9"或"4:3"）
+        poster:'https://file.digitaling.com/eImg/uimages/20150907/1441607120885946.gif',
+        // language: 'zh-CN',
+        controlBar: {
+          timeDivider: false,
+          durationDisplay: false,
+          remainingTimeDisplay: false,
+          currentTimeDisplay: false, // 当前时间
+          volumeControl: false, // 声音控制键
+          playToggle: false, // 暂停和播放键
+          progressControl: true, // 进度条
+          fullscreenToggle: true // 全屏按钮
 
+        },
+        //techOrder: ['flash'], // 兼容顺序
+        techOrder: ['flash', 'html5'],//设置顺序，
+        // flash: { hls: {withCredentials: false },swf: SWF_URL },
+        html5: { hls: { withCredentials: false } },
+        notSupportedMessage: '此视频暂无法播放，请稍后再试' // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
+      },
     }
   },
   watch: {
     detail(newValue) {
       if (newValue) {
-        this.loadDrawerData()
+        // this.loadDrawerData()
       } else {
         this.drawerData = null
       }
@@ -155,22 +209,30 @@ export default {
   computed: {
     ...mapState(['path']),
     pathSegments() {
-      return ('全部文件' + this.path).split('/')
+      return ('全部文件' + this.paths).split('/')
     }
   },
   methods: {
     init() {
       localStorage.setItem('path', '/')
+      localStorage.setItem('pathId', '/')
       const that = this;
-      this.postRequest('/netDisk/filelist', {})
-          // this.$axios.post(this.$HOST + 'netDisk/filelist', this.$qs.stringify({
-          //   sign: this.$sign,
-
-          //   username:localStorage.getItem('name')
-          // }))
-          .then(res => {
-            that.refresh(res);
-          })
+      this.getFileList(0).then(res => {
+        that.refresh(res);
+      })
+    },
+    getFileList(key) {
+      return new Promise((resolve, reject) => {
+        this.postRequest('/netDisk/filelist', {
+          id: key,
+          // sign: this.$sign,
+          // username:localStorage.getItem('name'),
+        }).then(res => {
+          resolve(res)
+        }).catch(e => {
+          reject(e)
+        })
+      })
     },
     search(key) {
       //搜索
@@ -230,6 +292,7 @@ export default {
         this.postRequest('/netDisk/delfile', {
           sign: this.$sign,
           name: localStorage.getItem('path') + name,
+          // id: localStorage.getItem('pathId') + id,
           username: this.username
         }).then(res => {
           if (res.data.code == 200) {
@@ -255,7 +318,9 @@ export default {
 
     },
     refresh(res) {
-      res.data.data.dir.forEach(item => {
+      let file = [];
+      let dir = [];
+      res.data.data.forEach(item => {
         let size;
         if (item.size == '') {
           size = '-';
@@ -268,33 +333,27 @@ export default {
             size = (item.size / 1024 / 1024 / 1024).toFixed(2) + 'GB';
           }
         }
-        this.tableData.push({
-          name: item.name,
-          time: new Date(item.createTime).toLocaleString(),
-          img: item.img,
-          size: size
-        })
-      })
-      res.data.data.file.forEach(item => {
-        let size;
-        if (item.size == '') {
-          size = '-';
+        if (item.type == 'folder') {
+          dir.push({
+            id: item.id,
+            name: item.name,
+            time: new Date(item.creTime).toLocaleString(),
+            type: item.type,
+            size: size
+          })
         } else {
-          if (item.size < 1048576) {
-            size = (item.size / 1024).toFixed(2) + 'KB';
-          } else if (item.size > 1048576 && item.size < 1073741824) {
-            size = (item.size / 1024 / 1024).toFixed(2) + 'MB';
-          } else if (item.size > 1073741824) {
-            size = (item.size / 1024 / 1024 / 1024).toFixed(2) + 'GB';
-          }
+          file.push({
+            id: item.id,
+            name: item.name,
+            img: item.icon,
+            path: item.path,
+            time: new Date(item.creTime).toLocaleString(),
+            type: item.type,
+            size: size
+          })
         }
-        this.tableData.push({
-          name: item.name,
-          time: new Date(item.createTime).toLocaleString(),
-          img: item.img,
-          size: size
-        })
       })
+      this.tableData = dir.concat(file)
     },
     download(name) {
       // window.location.href= `${this.$axios.defaults.baseURL}` +'/netDisk/download?username='+this.username+'&name='+name
@@ -309,6 +368,7 @@ export default {
         // sign:this.$sign,
         // username:this.username,
         path: localStorage.getItem('path'),
+        id: localStorage.getItem('pathId'),
         fname: this.input
       }).then(res => {
         if (res.data.code == 200) {
@@ -341,16 +401,15 @@ export default {
       })
     },
     next(row) {
-      if (row.img && row.img == 'folder') {
+      if (row.type && row.type == 'folder') {
         const newpath = localStorage.getItem('path') + row.name + '/';
+        const newpathId = localStorage.getItem('pathId') + row.id + '/';
         const that = this;
-        this.path = newpath
-        this.postRequest('/netDisk/filelist', {
-          // sign: this.$sign,
-          // username:localStorage.getItem('name'),
-          path: newpath
-        }).then(res => {
+        this.paths = newpath
+        this.pathId = newpathId
+        this.getFileList(row.id).then(res => {
           localStorage.setItem('path', newpath)
+          localStorage.setItem('pathId', newpathId)
           this.tableData = []
           that.refresh(res)
         })
@@ -358,33 +417,83 @@ export default {
         this.showDetail(row)
       }
     },
-    back() {
-      // console.log( localStorage.getItem('path').split('/'))
-      const str = localStorage.getItem('path').split('/');
-      str.splice(0, 1)
-      str.splice(str.length - 1, 1)
-      str.splice(str.length - 1, 1)
-      const that = this;
-      let backpath = '/';
-      str.forEach(item => {
-        backpath += item + '/'
-      })
-      this.path = backpath
-      this.postRequest('/netDisk/filelist', {
-        // sign: this.$sign,
-        // username:localStorage.getItem('name'),
-        path: backpath
-      }).then(res => {
-        localStorage.setItem('path', backpath)
+    goto(index) {
+      var that = this
+      let opath,opathId
+      opath = this.paths.split("/")
+      opathId = this.pathId.split("/")
+      console.log(index,opath[index],opathId[index])
+      let paths,pathId
+      paths = opath.slice(0,index+1)
+      pathId = opathId.slice(0,index+1)
+      this.getFileList(Number(opathId[index])).then(res => {
+        console.log('paths.join("/")',paths.join("/"))
+        this.setPath(paths.join("/"),pathId.join("/"))
         this.tableData = []
         that.refresh(res)
       })
-
+    },
+    back() {
+      const str = localStorage.getItem('path').split('/');
+      const strId = localStorage.getItem('pathId').split('/');
+      str.splice(0, 1)
+      str.splice(str.length - 1, 1)
+      str.splice(str.length - 1, 1)
+      strId.splice(0, 1)
+      strId.splice(strId.length - 1, 1)
+      strId.splice(strId.length - 1, 1)
+      const that = this;
+      let backpath = '/';
+      let backpathId = '/';
+      str.forEach(item => {
+        backpath += item + '/'
+      })
+      strId.forEach(item => {
+        backpathId += item + '/'
+      })
+      this.paths = backpath
+      this.pathId = backpathId
+      this.getFileList(strId.length ? strId[strId.length - 1] : 0).then(res => {
+        localStorage.setItem('path', backpath)
+        localStorage.setItem('pathId', backpathId)
+        this.tableData = []
+        that.refresh(res)
+      })
+    },
+    setPath(path,pathId) {
+      localStorage.setItem('path', path)
+      localStorage.setItem('pathId', pathId)
+      this.paths = path
+      this.pathId = pathId
     },
     showDetail(row) {
       console.log(row)
       this.row = row
       this.detail = true
+      if (row.type == 'image' && !row.img) {
+        this.getImgThumbnail(row.id)
+      }
+      if (row.type == 'video') {
+        // this.$refs.player.getVuePlayer().init()
+        this.changeVideoSource(row.id)
+      }
+      let path = row.path
+      const url = 'http://127.0.0.1:8012' + path.replaceAll('\\','/')
+      window.open('http://127.0.0.1:8012/onlinePreview?url='+encodeURIComponent(btoa(encodeURI(url))));
+    },
+    getImgThumbnail(id) {
+      this.getRequest('/netDisk/getImgThumbnail', {id: id}).then(res => {
+        console.log(res.data,'data')
+        this.row.img = res.data
+      })
+    },
+    changeVideoSource(newVideoId) {
+      // Assuming you have the correct video server URL pattern
+      // console.log('change', this.$refs.player)
+      // this.$refs.player && this.$refs.player.$refs.video.reload();
+      this.playerOptions.sources[0].src = `http://localhost:1314/video/${newVideoId}`;
+      console.log(this.playerOptions.sources[0].src)
+      // this.$refs.player.reload(); // Reload the player to change the video source
     },
     loadDrawerData() {
       this.isLoading = true
@@ -397,9 +506,10 @@ export default {
       }).finally(() => {
         this.isLoading = false
       })
-      this.getRequest('/netDisk/playMp4'+this.row.name).then(data => {
-        console.log(data,'data')
-      })
+      console.log(this.drawerData)
+      // this.getRequest('/netDisk/playMp4'+this.row.name).then(data => {
+      //   console.log(data,'data')
+      // })
       // this.$axios('/netDisk/playMp4/'+this.row.name)
       //     .then(function(response) {
       //       console.log(response)
@@ -409,6 +519,9 @@ export default {
       //       // 错误处理代码
       //       console.log(error)
       //     });
+    },
+    fileAdded() {
+      console.log("文件选择完毕！")
     }
   }
 }

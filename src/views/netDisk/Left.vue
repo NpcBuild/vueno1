@@ -4,7 +4,7 @@
       <el-menu
           default-active="1"
           class="el-menu-vertical-demo"
-      >
+          @select="handleMenuSelect">
         <el-menu-item index="1">
           <i class="el-icon-tickets"></i>
           <span slot="title">全部文件</span>
@@ -45,6 +45,7 @@
 <script>
 export default {
   name: "Left",
+  props: ['selectedMenuIndex'],
   data() {
     return {
       use: 0,
@@ -65,7 +66,11 @@ export default {
       this.usesize = res.data.realsize / MIB + 'M'
     })
   },
-  methods: {}
+  methods: {
+    handleMenuSelect(index) {
+      this.$emit('menuClick', index); // 触发自定义事件，通知父组件切换页面
+    },
+  }
 }
 </script>
 

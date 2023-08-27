@@ -21,9 +21,9 @@ module.exports = {
                 //是否跨域
                 changeOrigin: true,
                 ws: true,
-                // pathRewrite: {
-                //     '^/api': ''
-                // }
+                pathRewrite: {
+                    '^/api': ''
+                }
             }
         }
     },
@@ -61,6 +61,31 @@ module.exports = {
                     limit: 0,
                     esModule: false,
                 }))
+        // 添加GLTF loader的配置
+        config.module
+            .rule('gltf')
+            .test(/\.gltf$/)
+            .use('gltf-webpack-loader')
+            .loader('gltf-webpack-loader')
+            .end();
+        config.module
+            .rule('bin')
+            .test(/\.bin$/)
+            .use('file-loader')
+            .loader('file-loader')
+            .options({
+                name: '[name].[ext]'
+            })
+            .end();
+        // // 添加处理纹理图片文件的loader配置 （影响其他图片显示）
+        // config.module
+        //     .rule('textures')
+        //     .test(/\.(png|jpe?g|gif|webp)(\?.*)?$/)
+        //     .use('file-loader')
+        //     .loader('file-loader')
+        //     .options({
+        //         name: 'textures/[name].[ext]',
+        //     });
     },
     // configureWebpack: {
     //     resolve: {

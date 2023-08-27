@@ -4,7 +4,9 @@ import router from "@/router";
 import db from "@/store/sessionStorage";
 // import store from "@/store";
 
-axios.defaults.baseURL = "http://localhost:1314" //配置请求的根路径
+axios.defaults.baseURL = "http://localhost:1314" // 配置请求的根路径
+axios.defaults.withCredentials = true // 支持跨域访问
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8' // 为post请求设置请求头
 
 const request = axios.create({
     timeout: 5000,

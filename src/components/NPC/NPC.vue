@@ -178,7 +178,9 @@ export default {
 }
 .main{
   user-select: none;
-  position: absolute;
+  position: fixed;
+  right: 10%;
+  bottom: 80px;
   width: 10%;
   height: 10%;
   line-height: 40px;

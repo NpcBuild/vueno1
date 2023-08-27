@@ -3,178 +3,50 @@
     <div class="wrapper">
       <div class="container">
         <div class="left">
+          <span>{{loginStatus?'在线':'离线'}}</span>
           <div class="top">
             <input type="text" placeholder="Search" />
             <a href="javascript:;" class="search"></a>
           </div>
           <ul class="people">
-            <li class="person" data-chat="person1">
-              <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/thomas.jpg" alt="" />
-              <span class="name">Thomas Bangalter</span>
-              <span class="time">2:09 PM</span>
-              <span class="preview">I was wondering...</span>
-            </li>
-            <li class="person" data-chat="person2">
-              <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/dog.png" alt="" />
-              <span class="name">Dog Woofson</span>
-              <span class="time">1:44 PM</span>
-              <span class="preview">I've forgotten how it felt before</span>
-            </li>
-            <li class="person" data-chat="person3">
-              <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/louis-ck.jpeg" alt="" />
-              <span class="name">Louis CK</span>
-              <span class="time">2:09 PM</span>
-              <span class="preview">But we’re probably gonna need a new carpet.</span>
-            </li>
-            <li class="person" data-chat="person4">
-              <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/bo-jackson.jpg" alt="" />
-              <span class="name">Bo Jackson</span>
-              <span class="time">2:09 PM</span>
-              <span class="preview">It’s not that bad...</span>
-            </li>
-            <li class="person" data-chat="person5">
-              <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/michael-jordan.jpg" alt="" />
-              <span class="name">Michael Jordan</span>
-              <span class="time">2:09 PM</span>
-              <span class="preview">Wasup for the third time like is
-you blind bitch</span>
-            </li>
-            <li class="person" data-chat="person6">
-              <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/drake.jpg" alt="" />
-              <span class="name">Drake</span>
-              <span class="time">2:09 PM</span>
-              <span class="preview">howdoyoudoaspace</span>
+            <li class="person" v-for="(person, index) in persons"
+                @click="changeChat(person.userId)"
+                :class="{'active': activeId == person.userId}"
+                :key="index">
+              <img :src="person.avatar" alt="" />
+              <span class="name">{{person.userName}}</span>
+              <span class="time">{{person.timestamp}}</span>
+              <span class="preview">{{person.text}}</span>
+              <div v-if="person.unReadNum > 0" class="badge">{{ person.unReadNum }}</div>
             </li>
           </ul>
         </div>
         <div class="right">
-          <div class="top"><span>To: <span class="name">Dog Woofson</span></span></div>
-          <div class="chat" data-chat="person1">
-            <div class="conversation-start">
-              <span>Today, 6:48 AM</span>
+          <div class="top"><span>To: <span class="name">{{chatUserName}}</span></span></div>
+          <div class="chat active-chat" ref="chat" @scroll="onScroll">
+            <div v-for="message in messages"
+                 :key="message.id"
+                 class="bubble" :class="{'me': message.me, 'you': !message.me}">
+              {{ message.text }}
             </div>
-            <div class="bubble you">
-              Hello,
-            </div>
-            <div class="bubble you">
-              it's me.
-            </div>
-            <div class="bubble you">
-              I was wondering...
-            </div>
-          </div>
-          <div class="chat" data-chat="person2">
-            <div class="conversation-start">
-              <span>Today, 5:38 PM</span>
-            </div>
-            <div class="bubble you">
-              Hello, can you hear me?
-            </div>
-            <div class="bubble you">
-              I'm in California dreaming
-            </div>
-            <div class="bubble me">
-              ... about who we used to be.
-            </div>
-            <div class="bubble me">
-              Are you serious?
-            </div>
-            <div class="bubble you">
-              When we were younger and free...
-            </div>
-            <div class="bubble you">
-              I've forgotten how it felt before
-            </div>
-          </div>
-          <div class="chat" data-chat="person3">
-            <div class="conversation-start">
-              <span>Today, 3:38 AM</span>
-            </div>
-            <div class="bubble you">
-              Hey human!
-            </div>
-            <div class="bubble you">
-              Umm... Someone took a shit in the hallway.
-            </div>
-            <div class="bubble me">
-              ... what.
-            </div>
-            <div class="bubble me">
-              Are you serious?
-            </div>
-            <div class="bubble you">
-              I mean...
-            </div>
-            <div class="bubble you">
-              It’s not that bad...
-            </div>
-            <div class="bubble you">
-              But we’re probably gonna need a new carpet.
-            </div>
-          </div>
-          <div class="chat" data-chat="person4">
-            <div class="conversation-start">
-              <span>Yesterday, 4:20 PM</span>
-            </div>
-            <div class="bubble me">
-              Hey human!
-            </div>
-            <div class="bubble me">
-              Umm... Someone took a shit in the hallway.
-            </div>
-            <div class="bubble you">
-              ... what.
-            </div>
-            <div class="bubble you">
-              Are you serious?
-            </div>
-            <div class="bubble me">
-              I mean...
-            </div>
-            <div class="bubble me">
-              It’s not that bad...
-            </div>
-          </div>
-          <div class="chat" data-chat="person5">
-            <div class="conversation-start">
-              <span>Today, 6:28 AM</span>
-            </div>
-            <div class="bubble you">
-              Wasup
-            </div>
-            <div class="bubble you">
-              Wasup
-            </div>
-            <div class="bubble you">
-              Wasup for the third time like is <br />you blind bitch
-            </div>
-
-          </div>
-          <div class="chat" data-chat="person6">
-            <div class="conversation-start">
-              <span>Monday, 1:27 PM</span>
-            </div>
-            <div class="bubble you">
-              So, how's your new phone?
-            </div>
-            <div class="bubble you">
-              You finally have a smartphone :D
-            </div>
-            <div class="bubble me">
-              Drake?
-            </div>
-            <div class="bubble me">
-              Why aren't you answering?
-            </div>
-            <div class="bubble you">
-              howdoyoudoaspace
-            </div>
+<!--            <div class="conversation-start">-->
+<!--              <span>Today, 5:38 PM</span>-->
+<!--            </div>-->
+<!--            <div class="conversation-start">-->
+<!--              <span>Monday, 1:27 PM</span>-->
+<!--            </div>-->
           </div>
           <div class="write">
             <a href="javascript:;" class="write-link attach"></a>
-            <input type="text" />
-            <a href="javascript:;" class="write-link smiley"></a>
-            <a href="javascript:;" class="write-link send"></a>
+            <input type="text" v-model="messageInput" @keyup.enter="sendMessage">
+<!--            <a href="javascript:;" class="write-link smiley"></a>-->
+            <div class="write-link smiley" @click="clickEmoji" v-show="buttonStatus">
+
+            </div>
+            <div class="emoji-content" v-show="buttonStatus">
+              <Emoji v-show="showEmoji" @sendEmoji="sendEmoji" @closeEmoji="clickEmoji"></Emoji>
+            </div>
+            <button class="write-link send" @click="sendMessage"></button>
           </div>
         </div>
       </div>
@@ -183,44 +55,173 @@ you blind bitch</span>
 </template>
 
 <script>
+import {yfTimestampToTime} from "@/utils/time/time";
+import {animation} from "@/utils/yMethods"
+import Emoji from "@/components/chat/Emoji.vue";
 export default {
   name: "index",
+  components: {
+    Emoji
+  },
   data(){
     return {
+      loginStatus: false,
       friends: {},
-      chat: {}
+      chat: {},
+      persons: [],
+      activeId: null,
+      messages: [],
+      messageInput: '',
+      chatUserName: '',
+      ws: null,
+      //是否显示表情和录音按钮
+      buttonStatus: true,
+      showEmoji: false,
+      isAutoScroll: true,
     }
+  },
+  created() {
+    this.getMessageList()
+  },
+  computed: {
+  },
+  watch: {
+    messages() {
+      // 收到信消息后，对左侧列表进行排序
+      // this.messages.sort((a, b) => b.timestamp - a.timestamp);
+    },
   },
   mounted() {
-    document.querySelector('.chat[data-chat=person2]').classList.add('active-chat')
-    document.querySelector('.person[data-chat=person2]').classList.add('active')
-    this.friends = {
-          list: document.querySelector('ul.people'),
-          all: document.querySelectorAll('.left .person'),
-          name: ''
-    },
-    this.chat = {
-          container: document.querySelector('.container .right'),
-          current: null,
-          person: null,
-          name: document.querySelector('.container .right .top .name')
-    }
-    this.friends.all.forEach(f => {
-      f.addEventListener('mousedown', () => {
-        f.classList.contains('active') || this.setAciveChat(f)
-      })
-    });
+    this.init()
+  },
+  destroyed () {
+    this.ws.close() // 页面销毁后断开websocket连接
   },
   methods:{
-    setAciveChat(f) {
-      this.friends.list.querySelector('.active').classList.remove('active')
-      f.classList.add('active')
-      this.chat.current = this.chat.container.querySelector('.active-chat')
-      this.chat.person = f.getAttribute('data-chat')
-      this.chat.current.classList.remove('active-chat')
-      this.chat.container.querySelector('[data-chat="' + this.chat.person + '"]').classList.add('active-chat')
-      this.friends.name = f.querySelector('.name').innerText
-      this.chat.name.innerHTML = this.friends.name
+    init() {
+      var that = this
+      if (!window.WebSocket) {
+        // 不支持的情况
+        window.WebSocket = window.MozWebSocket;
+      }
+      if (window.WebSocket) {
+        let token = this.$store.getters.getToken
+        console.log(token)
+        this.ws = new WebSocket("ws://127.0.0.1:12345/socket?uid=" + token);
+        this.ws.onmessage = function (event) {
+          // console.log(JSON.parse(event.data));
+          console.log(event.data);
+        };
+        this.ws.onerror = function (event) {
+          console.log(event)
+          console.log('WebSocket连接失败')
+        };
+        this.ws.onopen = function (event) {
+          // 连接ws成功，变成在线状态
+          that.loginStatus = true
+          console.log(event);
+          console.log('Netty-WebSocket服务器。。。。。。连接');
+        };
+        this.ws.onclose = function (event) {
+          console.log(event);
+          console.log('Netty-WebSocket服务器。。。。。。关闭');
+        };
+      } else {
+        alert("您的浏览器不支持WebSocket协议！");
+      }
+    },
+    //关闭标签框
+    clickEmoji() {
+      this.showEmoji = !this.showEmoji;
+    },
+    //发送表情
+    sendEmoji(msg) {
+      console.log(msg)
+      // const dateNow = JCMFormatDate(getNowTime());
+      // let chatMsg = {
+      //   headImg: USER_HEAD_IMG_URL,
+      //   name: USER_NAME,
+      //   time: dateNow,
+      //   msg: msg,
+      //   chatType: 1, //信息类型，0文字，1图片
+      //   extend: {
+      //     imgType: 1, //(1表情，2本地图片)
+      //   },
+      //   uid: "jcm",
+      // };
+      // this.sendMsg(chatMsg);
+      // this.clickEmoji();
+    },
+    sendMessage() {
+      if (!this.messageInput) {return;}
+      if (!window.WebSocket) {return;}
+      if (this.ws.readyState == WebSocket.OPEN) {
+        this.messages.push({id: null, type: "text", text: this.messageInput, time: Date.parse(new Date()), me: true, read: false})
+        // this.ws.send(this.form.uid+':'+this.form.message);
+        this.getRequest('/socket/'+`${this.activeId}`,{message:this.messageInput},{
+          'content-type': 'application/json;charset=UTF-8',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
+          'X-Powered-By':' 3.2.1',
+          'Access-Control-Allow-Methods':'PUT,POST,GET,DELETE,OPTIONS',
+        }).then(res => {
+          console.log(res)
+          this.messageInput = ''
+          this.redirectScrollBottom()
+        })
+      } else {
+        // alert("WebSocket 连接没有成功建立！");
+        alert("您现在是未登录状态！");
+      }
+    },
+    getMessageList() {
+      // 向后端发送请求，获取聊天记录列表
+      this.getRequest('/messages/getUserMessage').then(response => {
+        // 将聊天记录保存到Vue实例的messages属性中
+        this.persons = response.data
+        this.persons.forEach(person => person.timestamp = yfTimestampToTime(person.timestamp))
+      })
+    },
+    async changeChat(tId) {
+      this.activeId = tId
+      // 向后端发送请求，获取好友的聊天记录
+      this.getRequest('/messages/getMessageByUserId',{tId:tId}).then(response => {
+        // 将聊天记录保存到Vue实例的messages属性中
+        this.messages = response.data
+        this.chatUserName = this.persons.filter(person => person.userId==tId)[0].userName
+        this.redirectScrollBottom()
+      })
+    },
+    markAsRead() {
+      // ...
+      this.messages.forEach((m) => {
+        if (!m.read) {
+          m.read = true;
+        }
+      });
+    },
+    onScroll() {
+      // const scrollDom = this.$refs.chat;
+      // const scrollTop = scrollDom.scrollTop;
+      // const offsetHeight = scrollDom.offsetHeight;
+      // const scrollHeight = scrollDom.scrollHeight;
+      // // 当滚动到底部，设置 isAutoScroll 为 true
+      // if (scrollTop + offsetHeight === scrollHeight) {
+      //   this.isAutoScroll = true;
+      // } else {
+      //   // 否则，用户正在手动滑动，设置为 false，停止自动滚动
+      //   this.isAutoScroll = false;
+      // }
+    },
+    redirectScrollBottom() {
+      // fixme 默认显示最下方聊天记录
+      // this.$refs.chat.scrollTop = this.$refs.chat.scrollHeight
+      //获取窗口高度并滚动至最底层
+      this.$nextTick(() => {
+        if (!this.isAutoScroll) return; // 如果 isAutoScroll 为 false，不执行滚动方法
+        const scrollDom = this.$refs.chat;
+        animation(scrollDom, scrollDom.scrollHeight - scrollDom.offsetHeight);
+      });
     }
   }
 }
@@ -269,7 +270,7 @@ $blue: #00b0ff;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   @include font;
-  background-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/image.jpg');
+  //background-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/image.jpg');
   background-size: cover;
   background-repeat: none;
   .wrapper {
@@ -391,6 +392,17 @@ $blue: #00b0ff;
           text-overflow: ellipsis;
           color: $grey;
         }
+        .badge {
+          position: absolute;
+          top: 0;
+          right: 0;
+          padding: 4px 8px;
+          background-color: red;
+          color: white;
+          font-size: 12px;
+          font-weight: bold;
+          border-radius: 50%;
+        }
         &.active,&:hover {
           margin-top: -1px;
           margin-left: -1px;
@@ -415,6 +427,9 @@ $blue: #00b0ff;
     float: left;
     width: 62.4%;
     height: 100%;
+    //overflow: hidden;
+    display: flex;
+    flex-direction: column;
     .top {
       width: 100%;
       height: 47px;
@@ -430,22 +445,38 @@ $blue: #00b0ff;
       }
     }
     .chat {
+       //position: relative;
+      //display: none;
+      //overflow: hidden;
+       //padding: 0 35px 92px;
+       //border-width: 1px 1px 1px 0;
+       //border-style: solid;
+       //border-color: $light;
+      //height: calc(100% - 48px);
+      //justify-content: flex-end;
+      //flex-direction: column;
       position: relative;
-      display: none;
-      overflow: hidden;
+      flex-grow: 1;
+      //overflow: auto;
       padding: 0 35px 92px;
       border-width: 1px 1px 1px 0;
       border-style: solid;
       border-color: $light;
-      height: calc(100% - 48px);
-      justify-content: flex-end;
-      flex-direction: column;
       &.active-chat {
-        display: block;
+        //display: block;
+        //display: flex;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        //隐藏滚动条
+        scrollbar-width: none; /*为了兼容 Firefox 和 Edge */
+        -ms-overflow-style: none; /*为了兼容 IE */
+        &::-webkit-scrollbar { display: none;} /*为了兼容 Chrome */
+        //height: calc(100% - 47px);
         display: flex;
+        flex-direction: column;
         .bubble {
           transition-timing-function: cubic-bezier(.4,-.04, 1, 1);
-          @for $i from 1 through 10 {
+          @for $i from 10 through 1 {
             &:nth-of-type(#{$i}) {
               animation-duration: .15s * $i;
             }
@@ -501,6 +532,10 @@ $blue: #00b0ff;
           }
         }
         &.send {
+          //去除边框
+          border: none;
+          //鼠标放上去变手型
+          cursor: pointer;
           &:before {
             display: inline-block;
             float: left;

@@ -103,8 +103,8 @@ export default {
         testChunks: true,
         // 服务器分片校验函数，秒传及断点续传基础
         checkChunkUploadedByResponse: function (chunk, message) {
+          // true:秒传
           let skip = false
-
           try {
             let objMessage = JSON.parse(message)
             console.log("skip",objMessage)

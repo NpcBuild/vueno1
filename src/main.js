@@ -45,7 +45,7 @@ import {getRequest,postRequest} from "./utils/request"
 Vue.prototype.getRequest = getRequest;
 Vue.prototype.postRequest = postRequest;
 
-require("./mock.js")
+// require("./mock.js")
 import dragBall from 'vue-drag-ball'
 Vue.use(dragBall)
 Vue.directive('drag',{

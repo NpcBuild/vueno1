@@ -8,6 +8,7 @@
 
 <script>
 // import HelloWorld from './components/HelloWorld.vue'
+import "@/assets/font/font.css"
 
 export default {
   name: 'App',
@@ -22,6 +23,11 @@ export default {
 </script>
 
 <style>
+  *{
+    padding:0;
+    margin:0;
+    font-family:'SSFY' !important;
+  }
 /*#app {*/
 /*  font-family: Avenir, Helvetica, Arial, sans-serif;*/
 /*  -webkit-font-smoothing: antialiased;*/
