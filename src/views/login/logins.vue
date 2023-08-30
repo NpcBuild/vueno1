@@ -38,7 +38,7 @@
         <h2>欢迎来到<span>NPC</span>登录页</h2>
         <p>扫码登录</p>
 <!--        <img src="https://qcloudtest-1258517105.cos.ap-guangzhou.myqcloud.com/IMG_1932.PNG" alt="">-->
-        <img :src="imgBase" alt="">
+        <img :src="imgBase" alt="" @click="qrCode">
 <!--        <div class="qrCodeImg-box" id="qrImgDiv"></div>-->
         <div class="social-media">
           <a href="#" class="social-icon">
@@ -128,7 +128,7 @@ export default {
         };
         this.ws.onclose = function (event) {
           console.log(event);
-          console.log('WebSocket服关闭');
+          console.log('WebSocket链接关闭');
         };
       } else {
         alert("您的浏览器不支持WebSocket协议！");

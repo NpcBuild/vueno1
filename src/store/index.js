@@ -5,7 +5,8 @@ Vue.use(Vuex)
 
 const store =  new Vuex.Store({
     state: {
-        token: ''
+        token: '',
+        clientIpAddress: null, // 客户端IP存储
     },
     getters: {
         getToken(state) {
@@ -26,9 +27,16 @@ const store =  new Vuex.Store({
         },
         init(state){
             state.list=[]
-        }
+        },
+        setIpAddress(state, ipAddress) {
+            state.clientIpAddress = ipAddress;
+        },
     },
-    actions: {},
+    actions: {
+        storeIpAddress({ commit }, ipAddress) {
+            commit('setIpAddress', ipAddress);
+        },
+    },
     modules: {}
 })
 
