@@ -58,19 +58,19 @@ Vue.directive('drag',{
 
 
 // 路由导航守卫控制访问权限
-// router.beforeEach((to,from,next) => {
-//   store.commit('GET_TOKEN')
-//   const token = store.state.token
-//   if(to.meta.requireAuth) {
-//     if (!token && to.name!='logins') {
-//       next({ path: "/logins" })
-//     } else {
-//       next()
-//     }
-//   }else {
-//     next()
-//   }
-// })
+router.beforeEach(async (to, from, next) => {
+  await store.dispatch('getTokenFromStorage');
+  const token = store.state.token;
+  if (to.meta.requireAuth) {
+    if (!token && to.name != 'logins') {
+      next({path: "/logins"})
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+})
 
 new Vue({
   router,

@@ -6,24 +6,31 @@ Vue.use(Vuex)
 const store =  new Vuex.Store({
     state: {
         token: '',
+        refreshToken: '',
         clientIpAddress: null, // 客户端IP存储
     },
     getters: {
         getToken(state) {
-            return state.token || localStorage.getItem("token1");
+            return state.token || localStorage.getItem("token");
+        },
+        getRefreshToken(state) {
+            return state.refreshToken || localStorage.getItem("refresh_token");
         }
     },
     mutations: {
         SET_TOKEN: (state,token) => {
             state.token = token
-            localStorage.setItem("token1", token)
+            localStorage.setItem("token", token)
+        },
+        SET_REFRESH_TOKEN: (state,token) => {
+            state.refreshToken = token
+            localStorage.setItem("refresh_token", token)
         },
         CLEAR_TOKEN: (state) => {
             state.token = ''
-            localStorage.clear("token1")
-        },
-        GET_TOKEN: ({ commit,state }) => {
-            commit('SET_TOKEN', state.token || localStorage.getItem("token1"))
+            state.refreshToken = ''
+            localStorage.clear("token")
+            localStorage.clear("refresh_token")
         },
         init(state){
             state.list=[]
@@ -33,6 +40,9 @@ const store =  new Vuex.Store({
         },
     },
     actions: {
+        getTokenFromStorage({ commit, state }) {
+            commit('SET_TOKEN', state.token || localStorage.getItem("token"));
+        },
         storeIpAddress({ commit }, ipAddress) {
             commit('setIpAddress', ipAddress);
         },

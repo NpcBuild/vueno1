@@ -7,7 +7,7 @@
       </span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item command="login">登录</el-dropdown-item>
-        <el-dropdown-item command="b">聊天</el-dropdown-item>
+        <el-dropdown-item command="chat">聊天</el-dropdown-item>
         <el-dropdown-item command="about">关于</el-dropdown-item>
         <el-dropdown-item command="logOut" divided>退出</el-dropdown-item>
       </el-dropdown-menu>
@@ -53,6 +53,8 @@
 // } else {
 //   // setMessageInnerHTML("你的浏览器不支持SSE");
 // }
+import db from "@/store/sessionStorage";
+
 export default {
   data() {
     return {
@@ -84,17 +86,16 @@ export default {
       })
     },
     handleCommand(command) {
-      this.$message('点击了 ' + command);
       if (command=="login") {
         this.$router.push("/login");
-      } else if (command=="b") {
+      } else if (command=="chat") {
         this.$router.push("/chat");
       } else if (command=="about") {
         this.$router.push("/about");
       } else if (command=="logOut") {
-        // eslint-disable-next-line no-debugger
-        debugger
         this.$store.commit('CLEAR_TOKEN');
+        db.remove("token")
+        db.remove("refresh_token")
         this.$router.push("/logins");
       }
     },

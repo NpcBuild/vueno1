@@ -59,6 +59,8 @@
 </template>
 
 <script>
+import db from "@/store/sessionStorage";
+
 export default {
   name: "logins",
   data () {
@@ -99,7 +101,7 @@ export default {
         window.WebSocket = window.MozWebSocket;
       }
       if (window.WebSocket) {
-        this.ws = new WebSocket("ws://127.0.0.1:12345/socket?uid="+uuid);
+        this.ws = new WebSocket("ws://127.0.0.1:12345/socket?uuid="+uuid);
         this.ws.onopen = function (event) {
           console.log(event);
           console.log('WebSocket链接成功');
@@ -170,9 +172,11 @@ export default {
         //登录成功后，token保存到客户端的sessionStorage中
         //项目中其他的API接口，必须在登录之后才能访问，记录token就是为了当我们访问有权限的接口时可以提供身份认证信息
         //token只应在当前网站打开期间生效，所以将token保存在sessionStorage中
-        window.sessionStorage.setItem("token",res.data);
+        db.save("token",res.data.accessToken);
+        db.save("refresh_token",res.data.refreshToken);
 
-        this.$store.commit('SET_TOKEN',res.data)
+        this.$store.commit('SET_TOKEN',res.data.accessToken)
+        this.$store.commit('SET_REFRESH_TOKEN',res.data.refreshToken)
 
         //
         // const jwt = res.headers['authorization']

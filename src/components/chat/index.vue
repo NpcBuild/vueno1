@@ -184,6 +184,7 @@ export default {
       this.activeId = tId
       // 向后端发送请求，获取好友的聊天记录
       this.getRequest('/messages/getMessageByUserId',{tId:tId}).then(response => {
+        console.log(response ,"请求结果")
         // 将聊天记录保存到Vue实例的messages属性中
         this.messages = response.data
         this.chatUserName = this.persons.filter(person => person.userId==tId)[0].userName

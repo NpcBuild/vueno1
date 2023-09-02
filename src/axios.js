@@ -2,7 +2,8 @@ import axios from "axios";
 import router from "@/router";
 // import Element from "element-ui"
 import db from "@/store/sessionStorage";
-// import store from "@/store";
+import store from "@/store";
+import {postRequest} from "./utils/request"
 
 axios.defaults.baseURL = "http://localhost:1314" // 配置请求的根路径
 axios.defaults.withCredentials = true // 支持跨域访问
@@ -20,7 +21,7 @@ const request = axios.create({
 })
 
 request.interceptors.request.use(config => {
-    config.headers['Authorization'] = localStorage.getItem("token1")
+    config.headers['Authorization'] = localStorage.getItem("token")
     return config
 })
 
@@ -53,24 +54,49 @@ request.interceptors.response.use(success => {
     }
     return success.data;
 }, error => {
-    if (error.response.status == 504 || error.response.status == 404) {
+    let { data,config } = error.response
+    if (data.code == 504 || data.code == 404) {
         alert('服务器迷路了( ╯□╰ )，再试一次吧。');
-    } else if (error.response.status == 403) {
+    } else if (data.code == 403) {
         alert('权限不足，请联系管理员');
-    } else if (error.response.status == 401) {
-        // 防止重复弹出消息
-        if(db.get("LOGINFLAG") == "0"){
-            alert('尚未登录或登录状态已过期，请登录')
-            db.remove("LOGINFLAG")
-            db.save("LOGINFLAG","1")
+    } else if (data.code == 401) {
+        if (!config.url.includes('/refreshToken')) {
+            // 刷新token重新登录
+            return refreshToken()
+                .then(res => setToken(res))
+                .then(result => {
+                if (result.code === 200) {
+                    config.headers['Authorization'] = result.data.accessToken
+                    return axios.request(config).then(response => response.data); // 提取响应体数据
+                }
+            })
+        } else {
+            // 防止重复弹出消息
+            if(db.get("LOGINFLAG") == "0"){
+                alert('尚未登录或登录状态已过期，请登录')
+                db.remove("LOGINFLAG")
+                db.save("LOGINFLAG","1")
+            }
+            router.replace('/');
+            return error.response;
         }
-        router.replace('/');
-    } else if (error.response.status == 429) {
+    } else if (data.code == 429) {
         alert('骚年，你的手速有点快哦！(￣.￣)...')
     } else {
         alert('未知错误!')
     }
-    return;
+    return error.response;
 })
+
+function refreshToken() {
+    return postRequest('/refreshToken/' + store.getters.getRefreshToken)
+}
+function setToken(res) {
+    return new Promise(resolve => {
+        store.commit('SET_TOKEN',res.data.accessToken)
+        store.commit('SET_REFRESH_TOKEN',res.data.refreshToken)
+        resolve(res)
+    })
+}
 
 export default request
