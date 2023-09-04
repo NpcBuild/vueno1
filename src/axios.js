@@ -88,8 +88,18 @@ request.interceptors.response.use(success => {
     return error.response;
 })
 
+let promise;
 function refreshToken() {
-    return postRequest('/refreshToken/' + store.getters.getRefreshToken)
+    if (promise) {
+        return promise
+    }
+    promise = new Promise((resolve) => {
+        resolve(postRequest('/refreshToken/' + store.getters.getRefreshToken))
+    })
+    promise.finally(() => {
+        promise = null
+    })
+    return promise
 }
 function setToken(res) {
     return new Promise(resolve => {

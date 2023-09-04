@@ -15,16 +15,18 @@
       <template
           slot="dateCell"
           slot-scope="{date, data}">
-        <div slot="reference" class="div-Calendar" @click="calendarOnClick(data)">
+        <div slot="reference" class="div-Calendar" @click="calendarOnClick(data)" @mouseenter="activateItem(data.day)" @mouseleave="deactivateItem">
           <p :class="data.isSelected ? 'is-selected' : ''">
             <b>{{ data.day.split('-').slice(1).join('-') }}</b> {{ data.isSelected ? '✔️' : ''}}
           </p>
-          <p :class="[{'ss': data.day < nowDate.getFullYear()+ '-' + (Array(2).join(0)+(nowDate.getMonth()+1)).slice(-2) + '-' + (Array(2).join(0)+nowDate.getDate()).slice(-2)}]">
-            <!--        {{ data.day }}-->
-            <!--          {{ nowDate.getFullYear()+ '-' + (Array(2).join(0)+(nowDate.getMonth()+1)).slice(-2) + '-' + (Array(2).join(0)+nowDate.getDate()).slice(-2) }}-->
-            <!--          {{ data.day >= nowDate.getFullYear()+ '-' + (Array(2).join(0)+(nowDate.getMonth()+1)).slice(-2) + '-' + (Array(2).join(0)+nowDate.getDate()).slice(-2) }}-->
-            <b>跑步</b>
-          </p>
+          <div :class="['task-scroll-container',(data.isSelected || activeId === data.day) ? 'scrollable' : '']">
+            <ul :class="[{'expired': data.day < nowDate.getFullYear()+ '-' + (Array(2).join(0)+(nowDate.getMonth()+1)).slice(-2) + '-' + (Array(2).join(0)+nowDate.getDate()).slice(-2)}]">
+              <li v-for="(item, index) in taskItems[0].list"
+                  :key="index">
+                <b>{{ item.text }}</b>
+              </li>
+            </ul>
+          </div>
         </div>
       </template>
     </el-calendar>
@@ -39,6 +41,7 @@ export default {
       sliderValue:'',
       value:'',
       nowDate: new Date(),
+      activeId: null,
       marks: {
         8: '8点',
         12: {
@@ -48,9 +51,13 @@ export default {
           label: this.$createElement('strong', '午休')
         }
       },
+      taskItems: [
+        {list: [{text: "跑步"}, {text: "俯卧撑"}, {text: "敲代码"}, {text: "弹吉他"}, {text: "剪视频"},],active: false},
+        [{}]
+      ],
     }
   },
-  created: function() {
+  created() {
     this.$nextTick(() => {
       // 点击前一个月
       let prevBtn = document.querySelector(
@@ -98,16 +105,24 @@ export default {
     this.sliderValue=[this.nowDate.getHours(),24];
   },
   methods: {
+    activateItem(id) {
+      this.activeId = id;
+      console.log(this.activeId)
+    },
+    deactivateItem() {
+      this.activeId = null;
+      console.log(this.activeId)
+    },
     //点击日期块
     calendarOnClick(e) {
       console.log(e);
       // this.isArrange.push("2020-06-19");
-      // this.$notify.error({
-      //   title: "日历块点击",
-      //   message: e,
-      //   position: "top-left"
-      // });
-      this.$message.success(e.toString())
+      this.$notify.error({
+        title: "日历块点击",
+        message: e,
+        position: "top-left"
+      });
+      this.$message.success(e.day.toString())
     },
   }
 }
@@ -117,7 +132,7 @@ export default {
 .is-selected {
   color: green;
 }
-.ss{
+.expired{
   color: #c0c4cc;
 }
 .div-Calendar {
@@ -125,6 +140,40 @@ export default {
   box-sizing: border-box;
   /*padding: 8px;*/
 }
+.task-scroll-container {
+  /*height: 60px; !* 调整容器高度以适应你的需求 *!*/
+  overflow: hidden;
+  position: relative;
+}
+li {
+  margin-bottom: 1px; /* 调整每个项之间的间距 */
+}
+div.scrollable {
+  /* 添加指定的样式，例如滚动样式 */
+  color: blue;
+  font-weight: bold;
+  /* 你可以根据需要添加更多样式 */
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  animation: scroll 10s linear infinite; /* 调整滚动速度，这里是10秒 */
+}
+@keyframes scroll {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+/*li.active {*/
+/*  animation: none; !* 移除滚动动画 *!*/
+/*}*/
+
+/deep/ .el-calendar-table__row{
+  height: 13vh;
+}
+
 </style>
 
 

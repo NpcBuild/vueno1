@@ -4,13 +4,23 @@
 <!--    <rolling-barrage></rolling-barrage>-->
 <!--    <Info :Info="Info"/>-->
     <el-container>
-      <el-aside width="50%">
-        <Carousel/>
-        <VideoPlayer></VideoPlayer>
-      </el-aside>
       <el-main>
         <Calendar/>
       </el-main>
+      <el-aside width="30%">
+        <Carousel v-if="false"/>
+        <VideoPlayer v-if="false"></VideoPlayer>
+        <div class="card-body">
+          <div style="padding: 70px;">
+            <h1 style="color: rgb(0, 67, 190);margin-bottom: 20px;font-weight: 500;font-size: xx-large;border-bottom: solid;">ToDo任务清单</h1>
+            <div class="wrapper">
+              <div class="task-list" style="margin-top: 20px;">
+                <todo-task v-for="(task, index) in tasks" :key="index" :task-text="task.text"></todo-task>
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-aside>
     </el-container>
     <drag-ball :value="message" v-drag @click="this.$message.error('悬浮球事件');">
       <div slot="value"><input type="checkbox" class="toggler" id="toggler"/>
@@ -98,6 +108,7 @@ import Carousel from "@/components/Carousel";
 import Calendar from "@/components/Calendar";
 import VideoPlayer from "@/components/videoPlayer/video2.vue";
 import NPC from "@/components/NPC/NPC.vue";
+import TodoTask from "@/components/todo-task.vue";
 
 
 // let scrollContent = document.getElementById("home");
@@ -119,10 +130,14 @@ export default {
         content:"",
         source:"",
       },
-      message: '1'
+      message: '1',
+      tasks: [
+        {text: "跑步"}, {text: "俯卧撑"}, {text: "敲代码"}, {text: "弹吉他"}, {text: "剪视频"},
+      ]
     }
   },
   components: {
+    TodoTask,
     NPC,
     VideoPlayer,
     Header,
@@ -198,7 +213,32 @@ export default {
   /*position: relative;*/
   /*overflow: hidden;*/
 }
-
+.wrapper {
+  height: 600px;
+  overflow: hidden;
+}
+.task-list {
+  font-feature-settings: "tnum","tnum";
+  box-sizing: border-box;
+  color: rgba(0,0,0,.85);
+  font-size: 14px;
+  font-variant: tabular-nums;
+  line-height: 1.5715;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+.card-body {
+  width: 550px;
+  height: calc(100% - 40px);
+  border-color: rgb(0, 67, 190);
+  border-width: 3px;
+  border-radius: 25px;
+  margin-left: 100px;
+  margin-top: 20px;
+  box-shadow: rgb(0, 67, 190) 1px 1px 5px;
+}
 .toggler{
   position: absolute;
   /*display: block;*/
