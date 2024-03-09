@@ -5,7 +5,7 @@ module.exports = {
         "vuetify"
     ],
     // assetsDir: 'static',
-    publicPath: './',
+    publicPath: '/',
     devServer: {
         port: 9000,
         open: true,
@@ -17,7 +17,7 @@ module.exports = {
         proxy: {
             "/api": {
                 //请求源地址
-                target: 'http://localhost:1314',
+                target: process.env.VUE_APP_API_BASE_URL,
                 //是否跨域
                 changeOrigin: true,
                 ws: true,

@@ -23,7 +23,7 @@ export default {
 </script>
 
 <style>
-  *{
+  *:not(/deep/ .video-js){
     padding:0;
     margin:0;
     font-family:'SSFY' !important;

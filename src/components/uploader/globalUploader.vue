@@ -94,7 +94,7 @@ export default {
   data() {
     return {
       initOptions: {
-        target: 'http://localhost:1314/netDisk/upload',
+        target: process.env.VUE_APP_API_BASE_URL + '/netDisk/upload',
         chunkSize: '2048000',
         fileParameterName: 'file',
         // maxChunkRetries: 3,
@@ -417,7 +417,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 * {
   font-family: "SSFY";
 }

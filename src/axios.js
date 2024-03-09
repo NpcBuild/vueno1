@@ -5,12 +5,18 @@ import db from "@/store/sessionStorage";
 import store from "@/store";
 import {postRequest} from "./utils/request"
 
-axios.defaults.baseURL = "http://localhost:1314" // 配置请求的根路径
+axios.defaults.baseURL = getBackendURL() // 配置请求的根路径
 axios.defaults.withCredentials = true // 支持跨域访问
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8' // 为post请求设置请求头
 
+function getBackendURL() {
+    return process.env.VUE_APP_API_BASE_URL
+    // 在这里编写获取后端地址的逻辑
+    // return 'http://192.168.1.5:1314'; // 这可以是从API请求或其他途径获取的值
+}
+
 const request = axios.create({
-    timeout: 5000,
+    timeout: 60000, // 超时时间
     headers: {
         'content-type': 'application/json;charset=UTF-8',
         'Access-Control-Allow-Origin': '*',
@@ -54,6 +60,13 @@ request.interceptors.response.use(success => {
     }
     return success.data;
 }, error => {
+    console.log(error)
+    if (error.response.status === 404) {
+        // 对于 404 错误，可以进行特殊处理，比如重定向到一个 404 页面
+        // 或者显示一个特定的错误消息
+        console.log('404 错误：资源未找到');
+    }
+
     let { data,config } = error.response
     if (data.code == 504 || data.code == 404) {
         alert('服务器迷路了( ╯□╰ )，再试一次吧。');
@@ -77,7 +90,8 @@ request.interceptors.response.use(success => {
                 db.remove("LOGINFLAG")
                 db.save("LOGINFLAG","1")
             }
-            router.replace('/');
+            alert('尚未登录或登录状态已过期，请登录')
+            router.replace('/logins');
             return error.response;
         }
     } else if (data.code == 429) {

@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <div class="main" v-drag>{{transcript}}</div>
-    <FloatBall v-drag></FloatBall>
+    <div class="main" v-drags>{{transcript}}</div>
+    <FloatBall v-drags></FloatBall>
   </div>
 </template>
 
@@ -20,47 +20,7 @@ export default {
     FloatBall
   },
   mounted() {
-    this.startRecognition()
-  },
-  directives: {
-    //v-drag实现拖拽
-    drag: {
-      // 指令的定义
-      bind: function(el) {
-        let oDiv = el;  // 获取当前元素
-        oDiv.onmousedown = (e) => {
-          // 算出鼠标相对元素的位置
-          let disX = e.clientX - oDiv.offsetLeft;
-          let disY = e.clientY - oDiv.offsetTop;
-
-          document.onmousemove = (e) => {
-            // 用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
-            let left = e.clientX - disX;
-            let top = e.clientY - disY;
-
-            oDiv.style.left = left + 'px';
-            oDiv.style.top = top + 'px';
-          };
-
-          document.onmouseup = (e) => {
-            document.onmousemove = null;
-            document.onmouseup = null;
-            console.log(e)
-          }
-        }
-      },
-      /*阻止拖拽*/
-      stopdrag: {
-        inserted: function(el, binding, vnode) {
-          let element = el;
-          element.onmousedown = function(e) {
-            e.stopPropagation()
-          }
-          console.log(binding)
-          console.log(vnode)
-        }
-      }
-    }
+    if (this.checkMicrophoneAccess()) this.startRecognition()
   },
   beforeDestroy() {
     if (this.recognition) {
@@ -68,10 +28,31 @@ export default {
     }
   },
   methods: {
+    // 检查是否支持
+    checkMicrophoneAccess() {
+      if (!('webkitSpeechRecognition' in window)) {
+        alert('你的浏览器不支持语音识别')
+        return
+      }
+
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices
+            .getUserMedia({ audio: true })
+            .then(() => {
+              console.log('已获得麦克风访问权限');
+              // 在这里初始化和使用webkitSpeechRecognition
+            })
+            .catch(error => {
+              console.error('无法访问麦克风', error);
+            });
+      } else {
+        console.error('你的浏览器不支持 getUserMedia');
+      }
+    },
     // 监听是否启动问答
     startMonitor() {
       if (!('webkitSpeechRecognition' in window)) {
-        alert('不支持语音识别')
+        alert('你的浏览器不支持语音识别')
         return
       }
 
@@ -100,7 +81,7 @@ export default {
     // 语音识别功能
     startRecognition() {
       if (!('webkitSpeechRecognition' in window)) {
-        alert('不支持语音识别')
+        alert('你的浏览器不支持语音识别')
         return
       }
 

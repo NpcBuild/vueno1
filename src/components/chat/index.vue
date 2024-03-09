@@ -174,7 +174,7 @@ export default {
     },
     getMessageList() {
       // 向后端发送请求，获取聊天记录列表
-      this.getRequest('/messages/getUserMessage').then(response => {
+      this.postRequest('/messages/getUserMessage').then(response => {
         // 将聊天记录保存到Vue实例的messages属性中
         this.persons = response.data
         this.persons.forEach(person => person.timestamp = yfTimestampToTime(person.timestamp))

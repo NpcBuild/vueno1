@@ -4,18 +4,23 @@
 <!--    <rolling-barrage></rolling-barrage>-->
 <!--    <Info :Info="Info"/>-->
     <el-container>
+<!--      日历区域-->
       <el-main>
-        <Calendar/>
+        <Calendar @calClick="calClick"/>
       </el-main>
       <el-aside width="30%">
         <Carousel v-if="false"/>
-        <VideoPlayer v-if="false"></VideoPlayer>
+        <VideoPlayer v-if="false"/>
         <div class="card-body">
-          <div style="padding: 70px;">
-            <h1 style="color: rgb(0, 67, 190);margin-bottom: 20px;font-weight: 500;font-size: xx-large;border-bottom: solid;">ToDo任务清单</h1>
-            <div class="wrapper">
+          <i class="el-icon-full-screen" @click="goTodoDetail" style="font-size:20px;"></i>
+          <div style="padding: 2vw;">
+            <div class="title" style="border-bottom: solid;">
+              <span style="color: rgb(0, 67, 190);margin-bottom: 20px;font-weight: 500;font-size: 2vw;">ToDo任务清单</span>
+              <div style="float: right;font-size: 0.8vw;">{{date}}</div>
+            </div>
+            <div class="wrapper" v-click-outside="handleDivClick">
               <div class="task-list" style="margin-top: 20px;">
-                <todo-task v-for="(task, index) in tasks" :key="index" :task-text="task.text"></todo-task>
+                <todo-task ref="tasks" v-for="(task, index) in tasks" :key="index" :task="task" :completed="task.completedStatus === '1'" @refresh="calClick"></todo-task>
               </div>
             </div>
           </div>
@@ -109,6 +114,7 @@ import Calendar from "@/components/Calendar";
 import VideoPlayer from "@/components/videoPlayer/video2.vue";
 import NPC from "@/components/NPC/NPC.vue";
 import TodoTask from "@/components/todo-task.vue";
+import {timestampToDateStr} from "@/utils/time/time";
 
 
 // let scrollContent = document.getElementById("home");
@@ -131,8 +137,9 @@ export default {
         source:"",
       },
       message: '1',
+      date: '',
       tasks: [
-        {text: "跑步"}, {text: "俯卧撑"}, {text: "敲代码"}, {text: "弹吉他"}, {text: "剪视频"},
+        {todoName: "跑步"}, {todoName: "俯卧撑"}, {todoName: "敲代码"}, {todoName: "弹吉他"}, {todoName: "剪视频"},
       ]
     }
   },
@@ -147,6 +154,7 @@ export default {
     Calendar,
   },
   mounted() {
+    this.initTask()
     api.getPyqwenan({
       key:"9926be2444c935728b45d5e4b6f50da0"
     }).then(res =>{
@@ -164,6 +172,11 @@ export default {
     }).catch((error) => {
       console.log(error)
     })
+  },
+  computed: {
+    nowTime() {
+      return timestampToDateStr(new Date().getTime())
+    }
   },
   methods: {
     //滚动弹幕
@@ -200,11 +213,43 @@ export default {
       let synth = window.speechSynthesis
       let utterance = new SpeechSynthesisUtterance(this.Info.content)
       synth.speak(utterance)
+    },
+    // 日历块点击事件
+    calClick(day) {
+      this.initTask(day)
+    },
+    // 初始化待办列表
+    initTask(date) {
+      if (!date) {
+        // 获取当前日期
+        date = new Date().format("yyyy-MM-dd");
+      }
+      this.getRequest('/todo/getTodoList',{pageNum:1,pageSize:999,date:date}).then(res => {
+        this.tasks = res.data.records
+        this.date = date
+      })
+
+
+    },
+    handleDivClick(event) {
+      console.log(event)
+      console.log(this.$refs.tasks)
+      let changed
+      this.$refs.tasks && this.$refs.tasks.forEach(item => {
+        if (item.task.edit) {
+          item.task.edit = false
+          changed = true
+        }
+      })
+      if (!changed) this.tasks.push({todoName: "空",edit: true})
+    },
+    goTodoDetail() {
+      this.$router.push("/dailyPlan");
     }
   },
 }
 </script>
-<style>
+<style scoped>
 .home{
   /*width: 600px;*/
   /*height: 600px;*/
@@ -214,7 +259,7 @@ export default {
   /*overflow: hidden;*/
 }
 .wrapper {
-  height: 600px;
+  /*height: 600px;*/
   overflow: hidden;
 }
 .task-list {
@@ -230,12 +275,15 @@ export default {
   position: relative;
 }
 .card-body {
-  width: 550px;
-  height: calc(100% - 40px);
+  /*width: 550px;*/
+  width: 80%;
+  min-width: 300px;
+  height: calc(98% - 40px);
   border-color: rgb(0, 67, 190);
   border-width: 3px;
   border-radius: 25px;
-  margin-left: 100px;
+  /*margin-left: 100px;*/
+  margin-left: 10%;
   margin-top: 20px;
   box-shadow: rgb(0, 67, 190) 1px 1px 5px;
 }

@@ -1,13 +1,16 @@
 <template>
   <div class="main">
 <!--    <div id="step_1">-->
-    <el-dropdown @command="handleCommand">
-      <span class="el-dropdown-link" @click="drawer = true">
+    <el-dropdown @command="handleCommand" trigger="click">
+      <span class="el-dropdown-link" @dblclick="drawer = true">
         <el-avatar size="large" src="https://bpic.588ku.com/ad_diversion/19/08/22/915abbf3e26f11efc0c7e121b3c8f996.png"></el-avatar>
       </span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item command="login">登录</el-dropdown-item>
         <el-dropdown-item command="chat">聊天</el-dropdown-item>
+        <el-dropdown-item command="pixel">像素</el-dropdown-item>
+        <el-dropdown-item command="netDisk">网盘</el-dropdown-item>
+        <el-dropdown-item command="corpus">语录</el-dropdown-item>
         <el-dropdown-item command="about">关于</el-dropdown-item>
         <el-dropdown-item command="logOut" divided>退出</el-dropdown-item>
       </el-dropdown-menu>
@@ -68,15 +71,15 @@ export default {
     // 调用，要等所有加载完毕以后在触发,引导提示
     // this.setGuide()
 
-
-    // 获取消息数
-    // 创建 EventSource 对象连接到 /messages 路由
-    const eventSource = new EventSource('http://localhost:1314/messages');
-    // 当接收到消息时更新界面上的消息计数器
-    eventSource.addEventListener('message', event => {
-      console.log("see",event)
-      this.messageCount++;
-    });
+    //
+    // // 获取消息数
+    // // 创建 EventSource 对象连接到 /messages 路由
+    // const eventSource = new EventSource(process.env.VUE_APP_API_BASE_URL + '/messages');
+    // // 当接收到消息时更新界面上的消息计数器
+    // eventSource.addEventListener('message', event => {
+    //   console.log("see",event)
+    //   this.messageCount++;
+    // });
 
   },
   methods: {
@@ -90,8 +93,14 @@ export default {
         this.$router.push("/login");
       } else if (command=="chat") {
         this.$router.push("/chat");
+      } else if (command=="pixel") {
+        this.$router.push("/pixel");
+      } else if (command=="netDisk") {
+        this.$router.push("/netDisk");
       } else if (command=="about") {
         this.$router.push("/about");
+      } else if (command=="corpus") {
+        this.$router.push("/corpus");
       } else if (command=="logOut") {
         this.$store.commit('CLEAR_TOKEN');
         db.remove("token")

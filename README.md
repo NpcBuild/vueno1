@@ -35,4 +35,11 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 
 ## 目录
-1.
+
+
+## 动态更新api链接
+1. 使用环境变量
+2. 动态获取后端地址
+## 工具
+1. Swiper常用于移动端网站的内容触摸滑动
+2. npm-check 交互式管理依赖

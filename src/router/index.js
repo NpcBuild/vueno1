@@ -18,7 +18,14 @@ const netDisk = r => require.ensure([], () => r(require('@/views/netDisk/netDisk
 const music = r => require.ensure([], () => r(require('@/views/music/music.vue')), 'music');
 const chat = r => require.ensure([], () => r(require('@/components/chat/index')), 'chat');
 const chat2 = r => require.ensure([], () => r(require('@/components/chat/index2')), 'chat2');
+
+// const loading = () => import('@/components/loading/index');
+// const loading2 = () => import('@/components/loading/index2');
+// const loading3 = () => import('@/components/loading/index3');
+
 const loading = r => require.ensure([], () => r(require('@/components/loading/index')), 'loading');
+const loading2 = r => require.ensure([], () => r(require('@/components/loading/index2')), 'loading2');
+const loading3 = r => require.ensure([], () => r(require('@/components/loading/index3')), 'loading3');
 const weather = r => require.ensure([], () => r(require('@/components/weather/index')), 'weather');
 const pagination = r => require.ensure([], () => r(require('@/components/pagination/index')), 'pagination');
 const test = r => require.ensure([], () => r(require('@/components/test/expression')), 'test');
@@ -27,9 +34,14 @@ const voice = r => require.ensure([], () => r(require('@/components/voice/index'
 const video = r => require.ensure([], () => r(require('@/components/videoPlayer/videoPlayer')), 'video');
 const video2 = r => require.ensure([], () => r(require('@/components/videoPlayer/video2.vue')), 'video2');
 const dailyPlan = r => require.ensure([], () => r(require('@/views/todo/dailyPlan.vue')), 'dailyPlan');
+const china = r => require.ensure([], () => r(require('@/components/echarts/China.vue')), 'china');
 const test3 = r => require.ensure([], () => r(require('@/components/emoji/smileyPreloader.vue')), 'test3');
 const test4 = r => require.ensure([], () => r(require('@/components/videoPlayer/videoTest.vue')), 'test4');
 const yf = r => require.ensure([], () => r(require('@/components/NPC/yf.vue')), 'yf');
+const corpus = r => require.ensure([], () => r(require('@/views/corpus/corpus.vue')), 'corpus');
+const pixel = r => require.ensure([], () => r(require('@/views/pixel/index.vue')), 'pixel');
+const pixelCanvas = r => require.ensure([], () => r(require('@/components/pixel/test1/PixelCanvas.vue')), 'pixelCanvas');
+const pixelConf = r => require.ensure([], () => r(require('@/components/pixel/test1/PixelConf.vue')), 'PixelConf');
 
 const routes = [
     {
@@ -41,16 +53,21 @@ const routes = [
         },
         children: [
             {
-                path: '/index',
+                path: 'index',
                 name: '精选',
                 component: homeIndex
             },
             {
-                path: '/me',
+                path: 'me',
                 name: '我',
                 component: myself
             }
         ]
+    },
+    {
+        path: '/home',
+        name: 'Home',
+        component: Home
     },
     {
         path: '/about',
@@ -71,14 +88,6 @@ const routes = [
         path: '/socket',
         name: 'socket',
         component: socket
-    },
-    {
-        path: '/home',
-        name: 'Home',
-        component: Home,
-        meta: {                 //加一个自定义obj
-            requireAuth:true    //这个参数 true 代表需要登录才能进入
-        }
     },
     {
         path: '/admin',
@@ -137,9 +146,41 @@ const routes = [
         }
     },
     {
+        path: '/eCharts',
+        name: 'eCharts',
+        component: china,
+        // meta: {                 //加一个自定义obj
+        //     requireAuth:true    //这个参数 true 代表需要登录才能进入
+        // },
+        // children: [
+        //     {
+        //         path: '/china',
+        //         name: '精选',
+        //         component: china
+        //     },
+        // ]
+    },
+    {
         path: '/loading',
         name: 'loading',
-        component: loading
+        // component: loading,
+        children: [
+            {
+                path: '1',
+                name: 'loading1',
+                component: loading
+            },
+            {
+                path: '2',
+                name: 'loading2',
+                component: loading2
+            },
+            {
+                path: 'appp',
+                name: 'loading3',
+                component: loading3
+            }
+        ]
     },
     {
         path: '/weather',
@@ -193,10 +234,30 @@ const routes = [
         name: 'yf',
         component: yf
     },
+    {
+        path: '/corpus',
+        name: 'corpus',
+        component: corpus
+    },
+    {
+        path: '/pixel',
+        name: 'pixel',
+        component: pixel
+    },
+    {
+        path: '/pixelCanvas',
+        name: 'pixelCanvas',
+        component: pixelCanvas
+    },
+    {
+        path: '/pixelConf',
+        name: 'pixelConf',
+        component: pixelConf
+    },
 ]
 
 const router = new VueRouter({
-    mode: 'history',
+    // mode: 'history',
     base: process.env.BASE_URL,
     routes
 })

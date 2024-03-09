@@ -102,6 +102,7 @@ function getIpAddress(callback) {
             .then(data => {
                 const clientIpAddress = data.ip;
                 console.log('Fetched IP address:', clientIpAddress);
+                // fetch(process.env.VUE_APP_API_BASE_URL + '/vid?i=' + clientIpAddress).catch(error => {error})
 
                 // 将IP地址存储在 Vuex 中
                 store.dispatch('storeIpAddress', clientIpAddress);

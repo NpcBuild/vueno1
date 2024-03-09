@@ -44,7 +44,7 @@
           <a href="#" class="social-icon">
             <i class="el-icon-eleme"></i>
           </a>
-          <a href="http://localhost:1314/authorize" class="social-icon">
+          <a href="http://192.168.1.5:1314/authorize" class="social-icon">
             <i class="el-icon-c-scale-to-original"></i>
           </a>
           <a href="#" class="social-icon">
@@ -174,6 +174,8 @@ export default {
         //token只应在当前网站打开期间生效，所以将token保存在sessionStorage中
         db.save("token",res.data.accessToken);
         db.save("refresh_token",res.data.refreshToken);
+
+        // this.$store.commit('SET_TOKEN',res.data)
 
         this.$store.commit('SET_TOKEN',res.data.accessToken)
         this.$store.commit('SET_REFRESH_TOKEN',res.data.refreshToken)

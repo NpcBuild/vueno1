@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div>{{Info.title}}</div>
-    <div>{{Info.time}}</div>
-    <div>{{Info.todo}}</div>
+    <span>{{Info.title}}</span>
+    <span>{{Info.time}}</span>
+    <span>{{Info.todo}}</span>
     <br/>
     <hr/>
   </div>
@@ -23,5 +23,7 @@ export default {
 </script>
 
 <style scoped>
-
+span{
+  margin-left: 3vw;
+}
 </style>

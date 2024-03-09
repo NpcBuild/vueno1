@@ -5,9 +5,8 @@
 </template>
 
 <script>
-import { defineComponent, computed } from 'vue';
 
-export default defineComponent({
+export default ({
   name: 'SvgIcon',
   props: {
     prefix: {
@@ -19,13 +18,13 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
-    const symbolId = computed(() => `#${props.prefix}-${props.name}`);
-    return { symbolId };
+  computed: {
+    symbolId: function() {
+      return `#${this.prefix}-${this.name}`;
+    },
   },
 });
 </script>
 
 <style scoped>
-
 </style>

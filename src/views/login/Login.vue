@@ -86,7 +86,7 @@ export default {
         if (valid) {
           let _this = this;
           //判断axios发送用户名称，判断
-          _this.$axios.post('http://localhost:1314/login', {
+          _this.$axios.post(process.env.VUE_APP_API_BASE_URL + '/login', {
             account: _this.loginForm.user,
             password: _this.loginForm.pass,
           }, {

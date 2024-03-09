@@ -19,8 +19,7 @@ import VueIntro from 'vue-introjs';
 import 'intro.js/introjs.css';
 Vue.use(VueIntro);
 
-// import {drag} from "@/utils/directives";
-// Vue.use(drag)
+import '@/utils/directives'
 
 // 引入antd
 // import Antd from 'ant-design-vue';

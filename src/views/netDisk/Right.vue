@@ -114,8 +114,8 @@
                       @pause="onPlayerPause($event)"
                       @play="onPlayerPlay($event)"
                       @fullscreenchange="onFullscreenChange($event)"
-                      @click="fullScreen"
                       ref="player" />
+        <!--                      @click="fullScreen"-->
       </div>
       <div v-else>加载失败，请重试</div>
     </el-drawer>
@@ -173,7 +173,7 @@ export default {
         controls: true,
         fluid: true, // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
         aspectRatio: '16:9', // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值。值应该代表一个比例 - 用冒号分隔的两个数字（例如"16:9"或"4:3"）
-        poster:'https://file.digitaling.com/eImg/uimages/20150907/1441607120885946.gif',
+        // poster:'https://file.digitaling.com/eImg/uimages/20150907/1441607120885946.gif',
         // language: 'zh-CN',
         controlBar: {
           timeDivider: false,
@@ -186,7 +186,7 @@ export default {
           fullscreenToggle: true // 全屏按钮
 
         },
-        //techOrder: ['flash'], // 兼容顺序
+        // techOrder: ['flash'], // 兼容顺序
         techOrder: ['flash', 'html5'],//设置顺序，
         // flash: { hls: {withCredentials: false },swf: SWF_URL },
         html5: { hls: { withCredentials: false } },
@@ -477,9 +477,9 @@ export default {
         // this.$refs.player.getVuePlayer().init()
         this.changeVideoSource(row.id)
       }
-      let path = row.path
-      const url = 'http://127.0.0.1:8012' + path.replaceAll('\\','/')
-      window.open('http://127.0.0.1:8012/onlinePreview?url='+encodeURIComponent(btoa(encodeURI(url))));
+      // let path = row.path
+      // const url = 'http://127.0.0.1:8012' + path.replaceAll('\\','/')
+      // window.open('http://127.0.0.1:8012/onlinePreview?url='+encodeURIComponent(btoa(encodeURI(url))));
     },
     getImgThumbnail(id) {
       this.getRequest('/netDisk/getImgThumbnail', {id: id}).then(res => {
@@ -491,7 +491,7 @@ export default {
       // Assuming you have the correct video server URL pattern
       // console.log('change', this.$refs.player)
       // this.$refs.player && this.$refs.player.$refs.video.reload();
-      this.playerOptions.sources[0].src = `http://localhost:1314/video/${newVideoId}`;
+      this.playerOptions.sources[0].src = process.env.VUE_APP_API_BASE_URL + `/video/${newVideoId}`;
       console.log(this.playerOptions.sources[0].src)
       // this.$refs.player.reload(); // Reload the player to change the video source
     },

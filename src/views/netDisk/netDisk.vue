@@ -76,7 +76,7 @@ export default {
 
 }
 .el-main{
-  height: calc(100% - 62px);
+  /*height: calc(100% - 62px);*/
   max-width: calc(100% - 194px);
 }
 </style>

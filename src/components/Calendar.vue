@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div class="progress-day">
+      <div :key="index" v-for="(day, index) in days" class="day" :class="{'today': today === day, 'past': today > day}">{{day}}</div>
+    </div>
     <el-slider
         v-model="sliderValue"
         range
@@ -10,7 +13,7 @@
     >
     </el-slider>
 <!--    <el-calendar :range="['2022-06-06', '2022-06-26']">-->
-    <el-calendar v-model="value">
+    <el-calendar v-model="value" @change="handleCalendarChange" ref="calendar">
       <!-- 这里使用的是 2.5 slot 语法，对于新项目请使用 2.6 slot 语法-->
       <template
           slot="dateCell"
@@ -21,9 +24,9 @@
           </p>
           <div :class="['task-scroll-container',(data.isSelected || activeId === data.day) ? 'scrollable' : '']">
             <ul :class="[{'expired': data.day < nowDate.getFullYear()+ '-' + (Array(2).join(0)+(nowDate.getMonth()+1)).slice(-2) + '-' + (Array(2).join(0)+nowDate.getDate()).slice(-2)}]">
-              <li v-for="(item, index) in taskItems[0].list"
+              <li v-for="(item, index) in taskItems[data.day]"
                   :key="index">
-                <b>{{ item.text }}</b>
+                <b>{{item.completedStatus == '1'?'√':'⚪'}}{{ item.todoName }}</b>
               </li>
             </ul>
           </div>
@@ -42,6 +45,7 @@ export default {
       value:'',
       nowDate: new Date(),
       activeId: null,
+      today: 0,
       marks: {
         8: '8点',
         12: {
@@ -51,67 +55,80 @@ export default {
           label: this.$createElement('strong', '午休')
         }
       },
-      taskItems: [
-        {list: [{text: "跑步"}, {text: "俯卧撑"}, {text: "敲代码"}, {text: "弹吉他"}, {text: "剪视频"},],active: false},
-        [{}]
-      ],
+      taskItems: [],
     }
   },
   created() {
-    this.$nextTick(() => {
-      // 点击前一个月
-      let prevBtn = document.querySelector(
-          ".el-calendar__button-group .el-button-group>button:nth-child(1)"
-      );
-      prevBtn.addEventListener("click", e => {
-        console.log(this.data);
-        // this.$notify({
-        //   title: "上一月",
-        //   message: "上个月头天：" + this.value,
-        //   type: "success",
-        //   position: "top-left"
-        // });
-        this.$message.success(e.toString())
-      });
+    this.initClickEvent()
+    this.initDay()
 
-      //点击下一个月
-      let nextBtn = document.querySelector(
-          ".el-calendar__button-group .el-button-group>button:nth-child(3)"
-      );
-      nextBtn.addEventListener("click", () => {
-        console.log(this.value);
-        // this.$notify({
-        //   title: "下一月",
-        //   message: "下个月头天：" + this.value,
-        //   type: "warning",
-        //   position: "top-left"
-        // });
-      });
-
-      //点击今天
-      let todayBtn = document.querySelector(
-          ".el-calendar__button-group .el-button-group>button:nth-child(2)"
-      );
-      todayBtn.addEventListener("click", () => {
-        // this.$notify.info({
-        //   title: "今天",
-        //   message: "今天：" + this.value,
-        //   position: "top-left"
-        // });
-      });
-    });
   },
   mounted() {
     this.sliderValue=[this.nowDate.getHours(),24];
+    this.initCalendar()
   },
   methods: {
+    // 初始化页面的点击事件
+    initClickEvent() {
+      this.$nextTick(() => {
+        // 点击前一个月
+        let prevBtn = document.querySelector(
+            ".el-calendar__button-group .el-button-group>button:nth-child(1)"
+        );
+        prevBtn.addEventListener("click", e => {
+          console.log(this.data);
+          console.log(this.value);
+          this.$notify({
+            title: "上一月",
+            message: "上个月头天：" + this.value,
+            type: "success",
+            position: "top-left"
+          });
+          this.initCalendar()
+          this.$message.success(e.toString())
+        });
+
+        //点击下一个月
+        let nextBtn = document.querySelector(
+            ".el-calendar__button-group .el-button-group>button:nth-child(3)"
+        );
+        nextBtn.addEventListener("click", () => {
+          console.log(this.value);
+          // this.$notify({
+          //   title: "下一月",
+          //   message: "下个月头天：" + this.value,
+          //   type: "warning",
+          //   position: "top-left"
+          // });
+          this.initCalendar()
+        });
+
+        //点击今天
+        let todayBtn = document.querySelector(
+            ".el-calendar__button-group .el-button-group>button:nth-child(2)"
+        );
+        todayBtn.addEventListener("click", () => {
+          // this.$notify.info({
+          //   title: "今天",
+          //   message: "今天：" + this.value,
+          //   position: "top-left"
+          // });
+          this.initCalendar()
+        });
+      });
+    },
+    // 初始化日历的待办事项
+    initCalendar() {
+      var calendarSE = this.getCalendarSE();
+      this.getTaskItems('2024-' + calendarSE.start,'2024-' + calendarSE.end)
+    },
     activateItem(id) {
       this.activeId = id;
-      console.log(this.activeId)
+      // console.log(this.activeId)
     },
     deactivateItem() {
       this.activeId = null;
-      console.log(this.activeId)
+      // console.log(this.activeId)
     },
     //点击日期块
     calendarOnClick(e) {
@@ -123,7 +140,49 @@ export default {
         position: "top-left"
       });
       this.$message.success(e.day.toString())
+      this.$emit("calClick", e.day.toString());
     },
+    initDay() {
+      /* 获取当前日期 */
+      const today = new Date();
+      /* 获取当前月份 */
+      const month = today.getMonth();
+      /* 获取当前年份 */
+      const year = today.getFullYear();
+      /* 获取当前月份的天数 */
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      this.today = today.getDate()
+      let days = []
+      /* 遍历当前月份的每一天 */
+      for (let i = 1; i <= daysInMonth; i++) {
+        /* 创建一个日期方格元素 */
+        days.push(i)
+      }
+      this.days = days
+    },
+    handleCalendarChange(date) {
+      const start = date.start
+      const end = date.end
+      console.log((start,end))
+      this.getTaskItems(start,end)
+    },
+    getCalendarSE() {
+      const calendarElement = this.$refs.calendar.$el;
+
+      const dayElements = calendarElement.querySelectorAll('.el-calendar-day');
+
+      const firstDayElement = dayElements[0];
+      const lastDayElement = dayElements[dayElements.length - 1];
+
+      const firstDateString = firstDayElement.querySelector('b').innerText;
+      const lastDateString = lastDayElement.querySelector('b').innerText;
+      return {start:firstDateString,end:lastDateString}
+    },
+    getTaskItems(start, end) {
+      this.getRequest('/todo/getTodoCalendar',{startDate: start,endDate:end}).then(res => {
+        this.taskItems = res.data
+      })
+    }
   }
 }
 </script>
@@ -140,8 +199,42 @@ export default {
   box-sizing: border-box;
   /*padding: 8px;*/
 }
+
+/* 设置进度条容器的样式 */
+.progress-day {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  background-color: transparent;
+}
+/* 设置日期方格的样式 */
+.progress-day .day {
+  /* 设置方格的宽高和外边距 */
+  width: 50px;
+  height: 50px;
+  margin: 2px;
+  /* 设置方格的背景颜色、字体颜色、字体大小、水平居中和垂直居中 */
+  background-color: #ffffff;
+  color:  #a1abe6; /* 设置字体颜色 */
+  font-size: 21px;
+  text-align: center;
+  line-height: 50px;
+}
+/* 设置今天日期方格的样式 */
+.progress-day .today {
+  background-color: #ff953d;
+  color: #ffffff;
+}
+/* 设置过去日期方格的样式 */
+.progress-day .past {
+  background-color: #a892ff;
+  color: #6343bc;/* 设置字体颜色 */
+}
+
 .task-scroll-container {
   /*height: 60px; !* 调整容器高度以适应你的需求 *!*/
+  height: calc(12vh - 18px);
   overflow: hidden;
   position: relative;
 }
@@ -173,6 +266,11 @@ div.scrollable {
 /deep/ .el-calendar-table__row{
   height: 13vh;
 }
+
+/*/deep/ .el-calendar-table .el-calendar-day {*/
+/*  padding: 0px;*/
+/*  height: 100%;*/
+/*}*/
 
 </style>
 

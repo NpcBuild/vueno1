@@ -1,12 +1,15 @@
 <template>
-  <div class="task" v-if="show">
-    <div role="cell" class="col col-4">
+  <div class="task" v-drags v-if="show">
+    <div role="cell" class="col col-4" @click="markAsCompleted">
       <div class="TagStyle" :style="{'background-color': randomColor}"></div>
     </div>
-    <div role="cell" class="col col-18" @click="markAsCompleted">
-      <div class="list-item" :class="{ 'completed-task': completed }" style="font-size: 20px;">{{ taskText }}</div>
+    <div role="cell" class="col col-18" @dblclick="canEdit">
+      <div v-if="!task.edit" class="list-item" :class="{ 'completed-task': completed }" style="font-size: 20px;">{{ task.todoName }}</div>
+      <input v-else v-model="task.todoName" ref="myInput" type="text" placeholder="" name="text" class="input">
     </div>
     <div role="cell" class="col col-2">
+      <Collect></Collect>
+      <Like></Like>
       <span role="img" aria-label="close-circle" style="font-size: 20px;" @click="hidenTask">
         <i class="el-icon-circle-close"></i>
       </span>
@@ -16,11 +19,20 @@
 
 <script>
 import {randomNumber} from "@/utils/yMethods";
+import Collect from "@/components/icon/Collect.vue";
+import Like from "@/components/icon/Like.vue";
 
 export default {
   name: "todo-task",
+  components: {Like, Collect},
   props: {
-    taskText: String,
+    task: {
+      type: Object,
+      required: true,
+      default: () => ({
+        edit: false,
+      })
+    },
     completed: {
       type: Boolean,
       default: false
@@ -29,8 +41,17 @@ export default {
   data() {
     return {
       show: true,
+      edit: false,
       colos: ['rgb(255, 85, 0)','rgb(135, 208, 104)','rgb(45, 183, 245)']
     };
+  },
+  mounted() {
+    console.log(this.task)
+    if (this.task.edit) {
+      this.$nextTick(() => {
+        this.$refs.myInput.focus(); // 获取焦点
+      });
+    }
   },
   computed: {
     randomColor() {
@@ -39,12 +60,16 @@ export default {
   },
   methods: {
     markAsCompleted() {
-      this.completed = !this.completed
-      // if (this.completed) {
-      //   setTimeout(() => {
-      //     this.completed = false;
-      //   }, 3000);
-      // }
+      var date = new Date().format('yyyy-MM-dd')
+      this.postRequest('/todo/done', {
+        ids: this.task.id,
+        date: date
+      }).then(() => {
+        this.$emit("refresh", date);
+      })
+    },
+    canEdit() {
+      this.task.edit = true
     },
     hidenTask() {
       this.show = false
@@ -67,6 +92,7 @@ export default {
   outline: none;
 }
 .col {
+  /*height: 20px;*/
   max-width: 100%;
   min-height: 1px;
   position: relative;
@@ -97,5 +123,21 @@ export default {
   display: flex;
   justify-content: space-between;
   padding: 12px 0;
+}
+.input {
+  width: 90%;
+  font-size: 20px;
+  border-radius: 10px;
+  outline: 2px solid #FEBF00;
+  border: 0;
+  background-color: #e2e2e2;
+  outline-offset: 3px;
+  padding: 12px 0;
+  transition: 0.25s;
+}
+
+.input:focus {
+  outline-offset: 5px;
+  background-color: #fff
 }
 </style>
