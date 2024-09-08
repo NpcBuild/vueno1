@@ -24,7 +24,6 @@ Vue.directive('click-outside', {
 //v-drag实现拖拽
 Vue.directive('drags', {
     bind(el) {
-        console.log('elww'+el)
         let oDiv = el;  // 获取当前元素
         oDiv.onmousedown = (e) => {
             console.log(11111111)

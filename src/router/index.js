@@ -6,6 +6,7 @@ import Login from '../views/login/Login'
 import logins from '../views/login/logins'
 import socket from '../views/socket/socket'
 import About from '../views/About'
+import set from '../views/setting/index'
 import setting from '../views/setting/setting'
 
 Vue.use(VueRouter)
@@ -34,11 +35,13 @@ const voice = r => require.ensure([], () => r(require('@/components/voice/index'
 const video = r => require.ensure([], () => r(require('@/components/videoPlayer/videoPlayer')), 'video');
 const video2 = r => require.ensure([], () => r(require('@/components/videoPlayer/video2.vue')), 'video2');
 const dailyPlan = r => require.ensure([], () => r(require('@/views/todo/dailyPlan.vue')), 'dailyPlan');
+const mandalaPlan = r => require.ensure([], () => r(require('@/views/todo/mandalaPlan.vue')), 'mandalaPlan');
 const china = r => require.ensure([], () => r(require('@/components/echarts/China.vue')), 'china');
 const test3 = r => require.ensure([], () => r(require('@/components/emoji/smileyPreloader.vue')), 'test3');
 const test4 = r => require.ensure([], () => r(require('@/components/videoPlayer/videoTest.vue')), 'test4');
 const yf = r => require.ensure([], () => r(require('@/components/NPC/yf.vue')), 'yf');
 const corpus = r => require.ensure([], () => r(require('@/views/corpus/corpus.vue')), 'corpus');
+const phone = r => require.ensure([], () => r(require('@/views/phone/index.vue')), 'phone');
 const pixel = r => require.ensure([], () => r(require('@/views/pixel/index.vue')), 'pixel');
 const pixelCanvas = r => require.ensure([], () => r(require('@/components/pixel/test1/PixelCanvas.vue')), 'pixelCanvas');
 const pixelConf = r => require.ensure([], () => r(require('@/components/pixel/test1/PixelConf.vue')), 'PixelConf');
@@ -130,6 +133,14 @@ const routes = [
         }
     },
     {
+        path: '/set',
+        name: 'set',
+        component: set,
+        meta: {                 //加一个自定义obj
+            requireAuth:true    //这个参数 true 代表需要登录才能进入
+        }
+    },
+    {
         path: '/setting',
         name: 'setting',
         component: setting,
@@ -141,6 +152,14 @@ const routes = [
         path: '/dailyPlan',
         name: 'dailyPlan',
         component: dailyPlan,
+        meta: {                 //加一个自定义obj
+            requireAuth:true    //这个参数 true 代表需要登录才能进入
+        }
+    },
+    {
+        path: '/mandalaPlan',
+        name: 'mandalaPlan',
+        component: mandalaPlan,
         meta: {                 //加一个自定义obj
             requireAuth:true    //这个参数 true 代表需要登录才能进入
         }
@@ -238,6 +257,11 @@ const routes = [
         path: '/corpus',
         name: 'corpus',
         component: corpus
+    },
+    {
+        path: '/phone',
+        name: 'phone',
+        component: phone
     },
     {
         path: '/pixel',

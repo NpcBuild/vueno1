@@ -11,6 +11,9 @@
         <el-dropdown-item command="pixel">像素</el-dropdown-item>
         <el-dropdown-item command="netDisk">网盘</el-dropdown-item>
         <el-dropdown-item command="corpus">语录</el-dropdown-item>
+        <el-dropdown-item command="phone">手机</el-dropdown-item>
+        <el-dropdown-item command="mandalaPlan">计划</el-dropdown-item>
+        <el-dropdown-item command="set">设置</el-dropdown-item>
         <el-dropdown-item command="about">关于</el-dropdown-item>
         <el-dropdown-item command="logOut" divided>退出</el-dropdown-item>
       </el-dropdown-menu>
@@ -67,7 +70,6 @@ export default {
     }
   },
   mounted() {
-    console.debug('我进来了')
     // 调用，要等所有加载完毕以后在触发,引导提示
     // this.setGuide()
 
@@ -97,10 +99,16 @@ export default {
         this.$router.push("/pixel");
       } else if (command=="netDisk") {
         this.$router.push("/netDisk");
+      } else if (command=="set") {
+        this.$router.push("/set");
       } else if (command=="about") {
         this.$router.push("/about");
       } else if (command=="corpus") {
         this.$router.push("/corpus");
+      } else if (command=="phone") {
+        this.$router.push("/phone");
+      } else if (command=="mandalaPlan") {
+        this.$router.push("/mandalaPlan");
       } else if (command=="logOut") {
         this.$store.commit('CLEAR_TOKEN');
         db.remove("token")

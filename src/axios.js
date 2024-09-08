@@ -3,6 +3,7 @@ import router from "@/router";
 // import Element from "element-ui"
 import db from "@/store/sessionStorage";
 import store from "@/store";
+import { Message } from 'element-ui';
 import {postRequest} from "./utils/request"
 
 axios.defaults.baseURL = getBackendURL() // 配置请求的根路径
@@ -54,51 +55,24 @@ request.interceptors.request.use(config => {
 // )
 // 请求结果拦截
 request.interceptors.response.use(success => {
-    if (success.status && success.status == 200 && success.data.status == 500) {
-        alert(success.data.msg);
-        return;
-    }
+    handleError(success)
     return success.data;
 }, error => {
-    console.log(error)
-    if (error.response.status === 404) {
-        // 对于 404 错误，可以进行特殊处理，比如重定向到一个 404 页面
-        // 或者显示一个特定的错误消息
-        console.log('404 错误：资源未找到');
+    console.log('error', error)
+    if (error.message.includes("Network Error")) {
+        Message.error ("服务器失效")
+        return toLogin()
     }
-
-    let { data,config } = error.response
-    if (data.code == 504 || data.code == 404) {
-        alert('服务器迷路了( ╯□╰ )，再试一次吧。');
-    } else if (data.code == 403) {
-        alert('权限不足，请联系管理员');
-    } else if (data.code == 401) {
-        if (!config.url.includes('/refreshToken')) {
-            // 刷新token重新登录
-            return refreshToken()
-                .then(res => setToken(res))
-                .then(result => {
-                if (result.code === 200) {
-                    config.headers['Authorization'] = result.data.accessToken
-                    return axios.request(config).then(response => response.data); // 提取响应体数据
-                }
-            })
-        } else {
-            // 防止重复弹出消息
-            if(db.get("LOGINFLAG") == "0"){
-                alert('尚未登录或登录状态已过期，请登录')
-                db.remove("LOGINFLAG")
-                db.save("LOGINFLAG","1")
-            }
-            alert('尚未登录或登录状态已过期，请登录')
-            router.replace('/logins');
-            return error.response;
-        }
-    } else if (data.code == 429) {
-        alert('骚年，你的手速有点快哦！(￣.￣)...')
-    } else {
-        alert('未知错误!')
+    if (error.message.includes("401")) {
+        Message.error ("登录失效")
+        // fixme 打开注释后。一小时登录失效后不会根据refreshToken自动刷新获取token
+        // return toLogin()
     }
+    if (!error.status) {
+        Message.error ("请求错误，" + error)
+        return toLogin()
+    }
+    handleError(error.response)
     return error.response;
 })
 
@@ -117,10 +91,65 @@ function refreshToken() {
 }
 function setToken(res) {
     return new Promise(resolve => {
-        store.commit('SET_TOKEN',res.data.accessToken)
-        store.commit('SET_REFRESH_TOKEN',res.data.refreshToken)
+        store.commit('SET_TOKEN', res.data.accessToken)
+        store.commit('SET_REFRESH_TOKEN', res.data.refreshToken)
         resolve(res)
     })
 }
 
+function toLogin(routePath) {
+    if (routePath && routePath !== '/logins') {
+        router.replace('/logins?redirect=' + routePath)
+    } else {
+        router.replace('/logins')
+    }
+}
+
+function handleError(response) {
+    if (response.status === 404) {
+        // 对于 404 错误，可以进行特殊处理，比如重定向到一个 404 页面
+        // 或者显示一个特定的错误消息
+        console.log('404 错误：资源未找到');
+        return Message.error ('404 错误：资源未找到')
+    }
+
+    let { data,config } = response
+    if (data.code == 504 || data.code == 404) {
+        Message.error ('服务器迷路了( ╯□╰ )，再试一次吧。');
+    } else if (data.code == 500) {
+        Message.error ('服务器内部错误，' + data.message);
+    } else if (data.code == 403) {
+        Message.error ('权限不足，请联系管理员');
+    } else if (data.code == 401) {
+        let routePath = router.app._route.path;
+        if (!config.url.includes('/refreshToken')) {
+            // 刷新token重新登录
+            return refreshToken()
+                .then(res => {
+                    if (res.code === 200) {
+                        return setToken(res).then(result => {
+                            config.headers['Authorization'] = result.data.accessToken
+                            return axios.request(config).then(response => response.data); // 提取响应体数据
+                        })
+                    } else {
+                        return toLogin(routePath)
+                    }
+                })
+        } else {
+            // 防止重复弹出消息
+            if(db.get("LOGINFLAG") == "0"){
+                Message.error ('尚未登录或登录状态已过期，请登录')
+                db.remove("LOGINFLAG")
+                db.save("LOGINFLAG","1")
+            }
+            toLogin(routePath)
+        }
+    } else if (data.code == 429) {
+        Message.error ('骚年，你的手速有点快哦！(￣.￣)...')
+    }
+    // else {
+    //     console.log(data)
+    //     Message.error ('未知错误!')
+    // }
+}
 export default request

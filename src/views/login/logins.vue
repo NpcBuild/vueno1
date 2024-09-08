@@ -185,7 +185,8 @@ export default {
         // this.$store.commit('SET_TOKEN',jwt)
 
         //通过编程式导航跳转到首页，路由地址是/home
-        this.$router.push("/home");
+        if (this.$route.query.redirect) this.$router.push(this.$route.query.redirect);
+        else this.$router.push("/home");
       }else {
         this.$message.error(res.message);
       }

@@ -96,3 +96,22 @@ export function randomNumber() {
         return Number.NaN
     }
 }
+
+export function deepClone(obj, hash = new WeakMap()) {
+    if (obj === null) return null; // null 的情况
+    if (obj instanceof Date) return new Date(obj); // 日期对象直接返回一个新的日期对象
+    if (obj instanceof RegExp) return new RegExp(obj); // 正则对象直接返回一个新的正则对象
+    // 如果循环引用了就用 weakMap 来解决
+    if (hash.has(obj)) return hash.get(obj);
+
+    let allDesc = Object.getOwnPropertyDescriptors(obj);
+    let cloneObj = Object.create(Object.getPrototypeOf(obj), allDesc);
+    hash.set(obj, cloneObj);
+
+    for (let key of Reflect.ownKeys(obj)) {
+        cloneObj[key] = (typeof obj[key] === 'object' && obj[key] !== null)
+            ? deepClone(obj[key], hash)
+            : obj[key];
+    }
+    return cloneObj;
+}

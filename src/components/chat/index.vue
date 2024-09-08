@@ -176,16 +176,18 @@ export default {
       // 向后端发送请求，获取聊天记录列表
       this.postRequest('/messages/getUserMessage').then(response => {
         // 将聊天记录保存到Vue实例的messages属性中
-        this.persons = response.data
-        this.persons.forEach(person => person.timestamp = yfTimestampToTime(person.timestamp))
+        debugger
+        let data = response.data
+        data && data.forEach(person => person.timestamp = yfTimestampToTime(person.timestamp))
+        this.persons = data
       })
     },
     async changeChat(tId) {
       this.activeId = tId
       // 向后端发送请求，获取好友的聊天记录
       this.getRequest('/messages/getMessageByUserId',{tId:tId}).then(response => {
-        console.log(response ,"请求结果")
         // 将聊天记录保存到Vue实例的messages属性中
+        debugger
         this.messages = response.data
         this.chatUserName = this.persons.filter(person => person.userId==tId)[0].userName
         this.redirectScrollBottom()
@@ -429,6 +431,7 @@ $blue: #00b0ff;
     //overflow: hidden;
     display: flex;
     flex-direction: column;
+    //flex-direction: column-reverse;
     .top {
       width: 100%;
       height: 47px;
@@ -473,6 +476,7 @@ $blue: #00b0ff;
         //height: calc(100% - 47px);
         display: flex;
         flex-direction: column;
+        //flex-direction: column-reverse;
         .bubble {
           transition-timing-function: cubic-bezier(.4,-.04, 1, 1);
           @for $i from 10 through 1 {

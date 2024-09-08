@@ -22,8 +22,11 @@
           <p :class="data.isSelected ? 'is-selected' : ''">
             <b>{{ data.day.split('-').slice(1).join('-') }}</b> {{ data.isSelected ? '✔️' : ''}}
           </p>
-          <div :class="['task-scroll-container',(data.isSelected || activeId === data.day) ? 'scrollable' : '']">
-            <ul :class="[{'expired': data.day < nowDate.getFullYear()+ '-' + (Array(2).join(0)+(nowDate.getMonth()+1)).slice(-2) + '-' + (Array(2).join(0)+nowDate.getDate()).slice(-2)}]">
+          <div v-if="expired(data.day)" :class="[{'expired': expired(data.day)}]">
+            历史人物
+          </div>
+          <div v-else :class="['task-scroll-container',(data.isSelected || activeId === data.day) ? 'scrollable' : '']">
+            <ul :class="[{'expired': expired(data.day)}]">
               <li v-for="(item, index) in taskItems[data.day]"
                   :key="index">
                 <b>{{item.completedStatus == '1'?'√':'⚪'}}{{ item.todoName }}</b>
@@ -67,7 +70,13 @@ export default {
     this.sliderValue=[this.nowDate.getHours(),24];
     this.initCalendar()
   },
+  computed: {
+  },
+
   methods: {
+    expired(day) {
+      return day < this.nowDate.getFullYear() + '-' + (Array(2).join('0') + (this.nowDate.getMonth() + 1)).slice(-2) + '-' + (Array(2).join('0') + this.nowDate.getDate()).slice(-2);
+    },
     // 初始化页面的点击事件
     initClickEvent() {
       this.$nextTick(() => {
@@ -195,7 +204,7 @@ export default {
   color: #c0c4cc;
 }
 .div-Calendar {
-  height: 122px;
+  /*height: 122px;*/
   box-sizing: border-box;
   /*padding: 8px;*/
 }
@@ -267,10 +276,10 @@ div.scrollable {
   height: 13vh;
 }
 
-/*/deep/ .el-calendar-table .el-calendar-day {*/
-/*  padding: 0px;*/
-/*  height: 100%;*/
-/*}*/
+/deep/ .el-calendar-table .el-calendar-day {
+  /*padding: 0px;*/
+  height: 100%;
+}
 
 </style>
 

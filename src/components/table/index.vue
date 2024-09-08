@@ -37,6 +37,7 @@
       <template v-for="item in tableAttr">
         <slot :name="item.prop" :item="item">
           <el-table-column
+              v-if="item.type == 'text'"
               :align="item.align ? item.align : 'left'"
               :label="item.label"
               :min-width="item.width"
@@ -46,6 +47,35 @@
             <template slot-scope="scope">
               {{item.ishtml}}
               <div :class="item.wrap?'wrap':''">{{scope.row[item.prop] }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column
+              v-if="item.type == 'button'"
+              :align="item.align ? item.align : 'left'"
+              :label="item.label"
+              :min-width="item.width"
+              :prop="item.prop"
+              :sortable="item.sortable"
+              :show-overflow-tooltip="item.tooltip">
+            <template slot-scope="scope">
+              <div :class="item.wrap?'wrap':''">{{scope.row[item.prop] }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column
+              v-if="item.type == 'switch'"
+              :align="item.align ? item.align : 'left'"
+              :label="item.label"
+              :min-width="item.width"
+              :prop="item.prop"
+              :sortable="item.sortable"
+              :show-overflow-tooltip="item.tooltip">
+            <template slot-scope="scope">
+              <el-switch
+                  v-model="scope.row[item.prop]"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  @change="switchChange(item.prop, scope.row[item.prop], scope.row)">
+              </el-switch>
             </template>
           </el-table-column>
         </slot>
@@ -216,6 +246,9 @@ export default {
         }
       })
       return sums
+    },
+    switchChange(opt, val, row) {
+      this.$emit(opt, val, row)
     }
   }
 }

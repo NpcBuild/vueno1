@@ -100,7 +100,7 @@
 <!--        </li>-->
 <!--      </ul>-->
     </nav>
-    <NPC></NPC>
+    <NPC/>
   </div>
 </template>
 
@@ -159,8 +159,6 @@ export default {
       key:"9926be2444c935728b45d5e4b6f50da0"
     }).then(res =>{
       res = res.data
-      debugger
-      console.log(res)
       if (res.code == 200){
         this.Info.content = res.newslist[0].content
         this.Info.source = res.newslist[0].source
@@ -170,7 +168,7 @@ export default {
       console.log(res.newslist[0].source)
       this.speaks()
     }).catch((error) => {
-      console.log(error)
+      console.log('一言：' + error)
     })
   },
   computed: {

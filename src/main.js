@@ -40,9 +40,10 @@ import uploader from 'vue-simple-uploader'
 Vue.use(uploader)
 
 Vue.config.productionTip = false
-import {getRequest,postRequest} from "./utils/request"
+import {getRequest,postRequest,postRequestParams} from "./utils/request"
 Vue.prototype.getRequest = getRequest;
 Vue.prototype.postRequest = postRequest;
+Vue.prototype.postRequestParams = postRequestParams;
 
 // require("./mock.js")
 import dragBall from 'vue-drag-ball'
@@ -62,7 +63,7 @@ router.beforeEach(async (to, from, next) => {
   const token = store.state.token;
   if (to.meta.requireAuth) {
     if (!token && to.name != 'logins') {
-      next({path: "/logins"})
+      next({path: "/logins?redirect="+from.path})
     } else {
       next()
     }

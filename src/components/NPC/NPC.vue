@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="main" v-drags>{{transcript}}</div>
+    <div class="main" v-drags v-if="voiceDisable">{{transcript}}</div>
     <FloatBall v-drags></FloatBall>
   </div>
 </template>
@@ -11,6 +11,8 @@ export default {
   name: "NPC",
   data() {
     return {
+      voiceDisable: false, // 是否开启语音支持
+      voiceAssistant: false,
       isListening: false,
       transcript: '',
       recognition: null,
@@ -19,9 +21,16 @@ export default {
   components: {
     FloatBall
   },
-  mounted() {
-    if (this.checkMicrophoneAccess()) this.startRecognition()
+  created() {
+    this.getRequest('/setting/getSettingById', {id: 1}).then(res => {
+      this.voiceAssistant = res.data.voiceAssistant
+      if (this.voiceAssistant && this.checkMicrophoneAccess()) this.startRecognition()
+      else if (!this.voiceAssistant) {
+        this.stopRecognition()
+      }
+    })
   },
+  mounted() {},
   beforeDestroy() {
     if (this.recognition) {
       this.stopRecognition()
@@ -45,8 +54,10 @@ export default {
             .catch(error => {
               console.error('无法访问麦克风', error);
             });
+        return true
       } else {
         console.error('你的浏览器不支持 getUserMedia');
+        return
       }
     },
     // 监听是否启动问答
@@ -85,6 +96,7 @@ export default {
         return
       }
 
+      this.voiceDisable = true
       // eslint-disable-next-line no-undef
       this.recognition = new webkitSpeechRecognition()
       this.recognition.lang = 'zh-CN'
@@ -92,7 +104,6 @@ export default {
       this.recognition.interimResults = true
       // 说话时触发
       this.recognition.onresult = (event) => {
-        debugger
         let interimTranscript = ''
         let finalTranscript = ''
 
