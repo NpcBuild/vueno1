@@ -29,6 +29,11 @@
     <el-badge :value="messageCount" class="notification-badge">
       <el-icon name="bell" class="notification-icon"></el-icon>
     </el-badge>
+    <span>你好，</span>{{}}
+    <span>当前时间：{{new Date().format('yyyy-MM-dd hh:mm')}}</span>
+    <span v-for="records in records" :key="records.id">
+      <span>{{records.content}}</span>
+    </span>
   </div>
 </template>
 
@@ -67,7 +72,23 @@ export default {
       drawer: false,
       direction: 'rtl',
       messageCount: 0, // 消息数
+      records: [],
+      jumpMap: {
+        "login": "/login",
+        "chat": "/chat",
+        "pixel": "/pixel",
+        "netDisk": "/netDisk",
+        "corpus": "/corpus",
+        "phone": "/phone",
+        "mandalaPlan": "/mandalaPlan",
+        "set": "/set",
+        "about": "/about",
+        "logOut": "/logins",
+      }
     }
+  },
+  created() {
+    this.getCorpus()
   },
   mounted() {
     // 调用，要等所有加载完毕以后在触发,引导提示
@@ -91,29 +112,13 @@ export default {
       })
     },
     handleCommand(command) {
-      if (command=="login") {
-        this.$router.push("/login");
-      } else if (command=="chat") {
-        this.$router.push("/chat");
-      } else if (command=="pixel") {
-        this.$router.push("/pixel");
-      } else if (command=="netDisk") {
-        this.$router.push("/netDisk");
-      } else if (command=="set") {
-        this.$router.push("/set");
-      } else if (command=="about") {
-        this.$router.push("/about");
-      } else if (command=="corpus") {
-        this.$router.push("/corpus");
-      } else if (command=="phone") {
-        this.$router.push("/phone");
-      } else if (command=="mandalaPlan") {
-        this.$router.push("/mandalaPlan");
-      } else if (command=="logOut") {
+      if (command=="logOut") {
         this.$store.commit('CLEAR_TOKEN');
         db.remove("token")
         db.remove("refresh_token")
-        this.$router.push("/logins");
+      }
+      if (this.jumpMap[command]) {
+        this.$router.push(this.jumpMap[command]);
       }
     },
     // setGuide() {
@@ -175,6 +180,11 @@ export default {
     // },
     mess() {
       this.$message.success('ww')
+    },
+    getCorpus() {
+      this.getRequest('/corpus/getCorpusList',{tag: 11, pageNum: 0, pageSize: 1, random: true}).then(res => {
+        this.records = res.data.records
+      })
     }
   }
 }

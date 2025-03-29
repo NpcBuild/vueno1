@@ -1,6 +1,7 @@
 <template>
   <transition>
     <div ref="dragIcon"
+         v-if="isShow"
          class="dragIcon"
          @mouseenter="onHover"
          @mouseleave="onLeave"
@@ -10,14 +11,18 @@
          @touchend.stop="handleTouchEnd"
          :style="{left: left + 'px',top: top + 'px',width: localItemWidth + 'px',height: localItemHeight + 'px',backgroundImage: backgroundImages ,backgroundSize: 'cover'}"
          v-text="text"
-         @click="click"
-         v-if="isShow">
+         @click="click">
+      <emoting-eyes/>
     </div>
   </transition>
 </template>
 
 <script>
+import emotingEyes from "@/components/emoji/emotingEyes.vue";
 export default {
+  components: {
+    emotingEyes
+  },
   props: {
     text: {
       type: String,

@@ -13,7 +13,7 @@
         <VideoPlayer v-if="false"/>
         <div class="card-body">
           <i class="el-icon-full-screen" @click="goTodoDetail" style="font-size:20px;"></i>
-          <div style="padding: 2vw;">
+          <div style="padding: 2vw;overflow: auto">
             <div class="title" style="border-bottom: solid;">
               <span style="color: rgb(0, 67, 190);margin-bottom: 20px;font-weight: 500;font-size: 2vw;">ToDo任务清单</span>
               <div style="float: right;font-size: 0.8vw;">{{date}}</div>
@@ -139,7 +139,7 @@ export default {
       message: '1',
       date: '',
       tasks: [
-        {todoName: "跑步"}, {todoName: "俯卧撑"}, {todoName: "敲代码"}, {todoName: "弹吉他"}, {todoName: "剪视频"},
+        {},
       ]
     }
   },
@@ -222,7 +222,7 @@ export default {
         // 获取当前日期
         date = new Date().format("yyyy-MM-dd");
       }
-      this.getRequest('/todo/getTodoList',{pageNum:1,pageSize:999,date:date}).then(res => {
+      this.getRequest('/todo/getTodoList',{pageNum:1,pageSize:999,date:date,type:"2"}).then(res => {
         this.tasks = res.data.records
         this.date = date
       })
@@ -231,7 +231,6 @@ export default {
     },
     handleDivClick(event) {
       console.log(event)
-      console.log(this.$refs.tasks)
       let changed
       this.$refs.tasks && this.$refs.tasks.forEach(item => {
         if (item.task.edit) {
@@ -276,7 +275,7 @@ export default {
   /*width: 550px;*/
   width: 80%;
   min-width: 300px;
-  height: calc(98% - 40px);
+  height: calc(100vh - 80px);
   border-color: rgb(0, 67, 190);
   border-width: 3px;
   border-radius: 25px;

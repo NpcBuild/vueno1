@@ -7,7 +7,7 @@ import logins from '../views/login/logins'
 import socket from '../views/socket/socket'
 import About from '../views/About'
 import set from '../views/setting/index'
-import setting from '../views/setting/setting'
+import setting from '../views/setting/settings'
 
 Vue.use(VueRouter)
 
@@ -27,7 +27,9 @@ const chat2 = r => require.ensure([], () => r(require('@/components/chat/index2'
 const loading = r => require.ensure([], () => r(require('@/components/loading/index')), 'loading');
 const loading2 = r => require.ensure([], () => r(require('@/components/loading/index2')), 'loading2');
 const loading3 = r => require.ensure([], () => r(require('@/components/loading/index3')), 'loading3');
-const weather = r => require.ensure([], () => r(require('@/components/weather/index')), 'weather');
+const weather = r => require.ensure([], () => r(require('@/components/weather/index2')), 'weather');
+const calendar = r => require.ensure([], () => r(require('@/components/calendar/calendar')), 'calendar');
+const card = r => require.ensure([], () => r(require('@/components/card/card3')), 'card');
 const pagination = r => require.ensure([], () => r(require('@/components/pagination/index')), 'pagination');
 const test = r => require.ensure([], () => r(require('@/components/test/expression')), 'test');
 const test2 = r => require.ensure([], () => r(require('@/components/test2/index')), 'test2');
@@ -39,9 +41,13 @@ const mandalaPlan = r => require.ensure([], () => r(require('@/views/todo/mandal
 const china = r => require.ensure([], () => r(require('@/components/echarts/China.vue')), 'china');
 const test3 = r => require.ensure([], () => r(require('@/components/emoji/smileyPreloader.vue')), 'test3');
 const test4 = r => require.ensure([], () => r(require('@/components/videoPlayer/videoTest.vue')), 'test4');
+const emoji1 = r => require.ensure([], () => r(require('@/components/emoji/emotingEyes.vue')), 'emoji1');
+const countdownTimer = r => require.ensure([], () => r(require('@/components/time/countdownTimer.vue')), 'countdownTimer');
 const yf = r => require.ensure([], () => r(require('@/components/NPC/yf.vue')), 'yf');
+const layout = r => require.ensure([], () => r(require('@/views/layout/designApp.vue')), 'layout');
 const corpus = r => require.ensure([], () => r(require('@/views/corpus/corpus.vue')), 'corpus');
-const phone = r => require.ensure([], () => r(require('@/views/phone/index.vue')), 'phone');
+// const phone = r => require.ensure([], () => r(require('@/views/phone/index.vue')), 'phone');
+// const myMoney = r => require.ensure([], () => r(require('@/views/phone/money/index.vue')), 'myMoney');
 const pixel = r => require.ensure([], () => r(require('@/views/pixel/index.vue')), 'pixel');
 const pixelCanvas = r => require.ensure([], () => r(require('@/components/pixel/test1/PixelCanvas.vue')), 'pixelCanvas');
 const pixelConf = r => require.ensure([], () => r(require('@/components/pixel/test1/PixelConf.vue')), 'PixelConf');
@@ -206,6 +212,17 @@ const routes = [
         name: 'weather',
         component: weather
     },
+    // 日历
+    {
+        path: '/calendar',
+        name: 'calendar',
+        component: calendar
+    },
+    {
+        path: '/card',
+        name: 'card',
+        component: card
+    },
     // 页签
     {
         path: '/pagination',
@@ -249,9 +266,24 @@ const routes = [
         component: test4
     },
     {
+        path: '/emoji1',
+        name: 'emoji1',
+        component: emoji1
+    },
+    {
+        path: '/countdownTimer',
+        name: 'countdownTimer',
+        component: countdownTimer
+    },
+    {
         path: '/yf',
         name: 'yf',
         component: yf
+    },
+    {
+        path: '/layout',
+        name: 'layout',
+        component: layout
     },
     {
         path: '/corpus',
@@ -260,8 +292,100 @@ const routes = [
     },
     {
         path: '/phone',
-        name: 'phone',
-        component: phone
+        // component: () => import('@/layouts/DefaultLayout.vue'), // 使用布局组件
+        component: () => import('@/views/layout/phoneLayout.vue'), // 使用布局组件
+        children: [
+            {
+                path: '',
+                name: 'phone',
+                component: () => import('@/views/phone/index.vue'),
+            },
+            {
+                path: 'yiyan',
+                name: 'yiyan',
+                component: () => import('@/views/phone/yiyan/index.vue'),
+            },
+            {
+                path: 'money',
+                name: 'myMoney',
+                component: () => import('@/views/phone/money/index.vue'),
+            },
+            {
+                path: 'todo',
+                name: 'todo',
+                component: () => import('@/views/phone/todo/index2.vue'),
+            },
+            {
+                path: 'todo2',
+                name: 'todo2',
+                component: () => import('@/views/phone/todo/index.vue'),
+            },
+            {
+                path: 'goal',
+                name: 'goal',
+                component: () => import('@/views/phone/goal/index.vue'),
+            },
+            {
+                path: 'hobit',
+                name: 'hobit',
+                component: () => import('@/views/phone/hobit/index.vue'),
+            },
+            {
+                path: 'assets',
+                name: 'assets',
+                component: () => import('@/views/phone/assets/index.vue'),
+            },
+            {
+                path: 'cookbook',
+                name: 'cookbook',
+                component: () => import('@/views/phone/cookbook/index.vue'),
+            },
+            {
+                path: 'note',
+                name: 'note',
+                component: () => import('@/views/phone/note/index.vue'),
+            },
+            {
+                path: 'points',
+                name: 'points',
+                component: () => import('@/views/phone/points/index.vue'),
+            },
+            {
+                path: 'project',
+                name: 'project',
+                component: () => import('@/views/phone/project/index.vue'),
+            },
+            {
+                path: 'friends',
+                name: 'friends',
+                component: () => import('@/views/phone/friends/index.vue'),
+            },
+            {
+                path: 'love',
+                name: 'love',
+                component: () => import('@/views/phone/love/index.vue'),
+            },
+            {
+                path: 'me',
+                name: 'me',
+                component: () => import('@/views/phone/me/index.vue'),
+            },
+            {
+                path: 'setting',
+                name: 'setting',
+                component: () => import('@/views/phone/me/setting.vue'),
+            },
+            {
+                path: 'me2',
+                name: 'me2',
+                component: () => import('@/views/phone/me/index2.vue'),
+            },
+            {
+                path: 'me3',
+                name: 'me3',
+                component: () => import('@/views/phone/me/index3.vue'),
+            },
+        ],
     },
     {
         path: '/pixel',
