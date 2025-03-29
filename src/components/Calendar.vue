@@ -13,21 +13,40 @@
     >
     </el-slider>
 <!--    <el-calendar :range="['2022-06-06', '2022-06-26']">-->
-    <el-calendar v-model="value" @change="handleCalendarChange" ref="calendar">
+    <el-calendar v-model="value" @change="handleCalendarChange" ref="calendar" :class="[shouldHideLastRow? 'hide-last-row' : '']">
       <!-- 这里使用的是 2.5 slot 语法，对于新项目请使用 2.6 slot 语法-->
       <template
           slot="dateCell"
-          slot-scope="{date, data}">
+          slot-scope="{date, data}" style="background-color: red">
+        <!-- 225px:方形-->
+        <!-- style="height: 200px;"-->
         <div slot="reference" class="div-Calendar" @click="calendarOnClick(data)" @mouseenter="activateItem(data.day)" @mouseleave="deactivateItem">
           <p :class="data.isSelected ? 'is-selected' : ''">
             <b>{{ data.day.split('-').slice(1).join('-') }}</b> {{ data.isSelected ? '✔️' : ''}}
+            <span class="align-right">{{ taskItems[data.day] && taskItems[data.day].holiday ? '休🌟' : ''}}</span>
           </p>
-          <div v-if="expired(data.day)" :class="[{'expired': expired(data.day)}]">
-            历史人物
+
+          <div v-if="expired(data.day)" :class="[{'expired': expired(data.day)}]" style="text-align: center;height: calc(100% - 18px)">
+            <div style="height: 100%">
+<!--              <card3/>-->
+              <div v-if="loadingTaskItems" style="height: 100%;align-content: center;">
+                加载中~~~
+              </div>
+              <div v-else-if="!taskItems[data.day]" style="height: 100%">
+                未知
+              </div>
+              <div v-else-if="taskItems[data.day] && taskItems[data.day].finished" style="height: 100%">
+                <card3/>
+              </div>
+              <div v-else style="height: 100%;background-color: pink;align-content: center;">
+                未完成
+                <!--              <card3/>-->
+              </div>
+            </div>
           </div>
           <div v-else :class="['task-scroll-container',(data.isSelected || activeId === data.day) ? 'scrollable' : '']">
             <ul :class="[{'expired': expired(data.day)}]">
-              <li v-for="(item, index) in taskItems[data.day]"
+              <li v-for="(item, index) in taskItems[data.day] ? taskItems[data.day].list : []"
                   :key="index">
                 <b>{{item.completedStatus == '1'?'√':'⚪'}}{{ item.todoName }}</b>
               </li>
@@ -40,8 +59,11 @@
 </template>
 
 <script>
+import {weekdayNum, daysInMonth} from "@/utils/time/time";
+import card3 from "@/components/card/card3.vue";
 export default {
   name: "Calendar",
+  components: {card3},
   data(){
     return {
       sliderValue:'',
@@ -58,13 +80,15 @@ export default {
           label: this.$createElement('strong', '午休')
         }
       },
-      taskItems: [],
+      taskItems: {},
+      shouldHideLastRow: true,
+      loadingTaskItems: false
     }
   },
   created() {
     this.initClickEvent()
     this.initDay()
-
+    this.hiddenLastRow()
   },
   mounted() {
     this.sliderValue=[this.nowDate.getHours(),24];
@@ -76,6 +100,12 @@ export default {
   methods: {
     expired(day) {
       return day < this.nowDate.getFullYear() + '-' + (Array(2).join('0') + (this.nowDate.getMonth() + 1)).slice(-2) + '-' + (Array(2).join('0') + this.nowDate.getDate()).slice(-2);
+    },
+    showElement(data) {
+      if (!data) {
+        return false;
+      }
+      return data.finished;
     },
     // 初始化页面的点击事件
     initClickEvent() {
@@ -128,8 +158,17 @@ export default {
     },
     // 初始化日历的待办事项
     initCalendar() {
-      var calendarSE = this.getCalendarSE();
-      this.getTaskItems('2024-' + calendarSE.start,'2024-' + calendarSE.end)
+      const calendarSE = this.getCalendarSE();
+      let date = new Date();
+      let year = date.getFullYear();
+      let start = year + '-' + calendarSE.start;
+      let end = year + '-' + calendarSE.end;
+      if (calendarSE.start > calendarSE.end && date.getMonth() === 11) {
+        end = ++year + '-' + calendarSE.end;
+      } else if (calendarSE.start > calendarSE.end && date.getMonth() === 0) {
+        start = --year + '-' + calendarSE.start;
+      }
+      this.getTaskItems(start,end)
     },
     activateItem(id) {
       this.activeId = id;
@@ -150,6 +189,17 @@ export default {
       });
       this.$message.success(e.day.toString())
       this.$emit("calClick", e.day.toString());
+    },
+    // 判断是否需要隐藏日历最后一列
+    hiddenLastRow() {
+      // 获取当月第一天是周几
+      let weekdayNumVar = weekdayNum();
+      // 获取当月天数
+      let daysInMonthVar = daysInMonth();
+      let shouldHidden = weekdayNumVar < (8 - daysInMonthVar % 7);
+      this.shouldHideLastRow = shouldHidden;
+      console.log("是否隐藏最后一行：", shouldHidden)
+      return shouldHidden;
     },
     initDay() {
       /* 获取当前日期 */
@@ -188,7 +238,9 @@ export default {
       return {start:firstDateString,end:lastDateString}
     },
     getTaskItems(start, end) {
+      this.loadingTaskItems = true
       this.getRequest('/todo/getTodoCalendar',{startDate: start,endDate:end}).then(res => {
+        this.loadingTaskItems = false
         this.taskItems = res.data
       })
     }
@@ -196,7 +248,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
 .is-selected {
   color: green;
 }
@@ -207,6 +259,19 @@ export default {
   /*height: 122px;*/
   box-sizing: border-box;
   /*padding: 8px;*/
+}
+
+.align-right {
+  float: right; /* 或者使用 display: inline-block; text-align: right; */
+  /* 如果需要，可以添加一些内边距或外边距来调整位置 */
+  padding-left: 10px; /* 左边距，根据需要调整 */
+}
+
+/* 如果使用 display: inline-block; 方法 */
+.align-right-inline {
+  display: inline-block;
+  text-align: right;
+  /* 可能需要添加一些额外的样式来避免布局问题 */
 }
 
 /* 设置进度条容器的样式 */
@@ -229,6 +294,14 @@ export default {
   font-size: 21px;
   text-align: center;
   line-height: 50px;
+
+&--disabled {
+   color: rgba(#98a0a6, 0.6);
+   background-color: #ffffff;
+   background-color: red;
+   background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23f9f9fa' fill-opacity='1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+   cursor: not-allowed;
+ }
 }
 /* 设置今天日期方格的样式 */
 .progress-day .today {
@@ -279,6 +352,15 @@ div.scrollable {
 /deep/ .el-calendar-table .el-calendar-day {
   /*padding: 0px;*/
   height: 100%;
+}
+
+///deep/.el-calendar__body {
+//  height: 1000px;
+//}
+
+/*FIXEME：修复日历会多最后一行的问题，但有时候会少一行*/
+.hide-last-row /deep/.el-calendar__body tr:last-child {
+ display: none;
 }
 
 </style>

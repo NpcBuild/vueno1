@@ -55,61 +55,36 @@ request.interceptors.request.use(config => {
 // )
 // 请求结果拦截
 request.interceptors.response.use(success => {
-    handleError(success)
-    return success.data;
+    let res = handleError(success)
+    if (res === "none") {
+        return success.data;
+    }
+    return res;
 }, error => {
     console.log('error', error)
-    if (error.message.includes("Network Error")) {
-        Message.error ("服务器失效")
-        return toLogin()
-    }
-    if (error.message.includes("401")) {
-        Message.error ("登录失效")
-        // fixme 打开注释后。一小时登录失效后不会根据refreshToken自动刷新获取token
-        // return toLogin()
-    }
     if (!error.status) {
-        Message.error ("请求错误，" + error)
-        return toLogin()
+        if (error.message.includes("Network Error")) {
+            Message.error ("服务器失效")
+            return toLogin()
+        } else if (error.message.includes("401")) {
+            error.response.data.code = "401"
+            // return toLogin()
+        } else if (error.message.includes("404")) {
+            error.response.data.code = "404"
+        } else {
+            Message.error ("请求错误，" + error)
+        }
     }
-    handleError(error.response)
-    return error.response;
+    let res = handleError(error.response)
+    if (res === "none") {
+        return error.response;
+    }
+    return res;
 })
-
-let promise;
-function refreshToken() {
-    if (promise) {
-        return promise
-    }
-    promise = new Promise((resolve) => {
-        resolve(postRequest('/refreshToken/' + store.getters.getRefreshToken))
-    })
-    promise.finally(() => {
-        promise = null
-    })
-    return promise
-}
-function setToken(res) {
-    return new Promise(resolve => {
-        store.commit('SET_TOKEN', res.data.accessToken)
-        store.commit('SET_REFRESH_TOKEN', res.data.refreshToken)
-        resolve(res)
-    })
-}
-
-function toLogin(routePath) {
-    if (routePath && routePath !== '/logins') {
-        router.replace('/logins?redirect=' + routePath)
-    } else {
-        router.replace('/logins')
-    }
-}
 
 function handleError(response) {
     if (response.status === 404) {
-        // 对于 404 错误，可以进行特殊处理，比如重定向到一个 404 页面
-        // 或者显示一个特定的错误消息
-        console.log('404 错误：资源未找到');
+        // 对于 404 错误，可以进行特殊处理，比如重定向到一个 404 页面或者显示一个特定的错误消息
         return Message.error ('404 错误：资源未找到')
     }
 
@@ -120,6 +95,9 @@ function handleError(response) {
         Message.error ('服务器内部错误，' + data.message);
     } else if (data.code == 403) {
         Message.error ('权限不足，请联系管理员');
+    } else if (data.code == 429) {
+        // Message.error ('骚年，你的手速有点快哦！(￣.￣)...')
+        globalMessage(429, '骚年，你的手速有点快哦！(￣.￣)...')
     } else if (data.code == 401) {
         let routePath = router.app._route.path;
         if (!config.url.includes('/refreshToken')) {
@@ -144,12 +122,46 @@ function handleError(response) {
             }
             toLogin(routePath)
         }
-    } else if (data.code == 429) {
-        Message.error ('骚年，你的手速有点快哦！(￣.￣)...')
     }
     // else {
     //     console.log(data)
     //     Message.error ('未知错误!')
     // }
+    return "none";
+}
+
+let promise;
+function refreshToken() {
+    if (promise) {
+        return promise
+    }
+    promise = new Promise((resolve) => {
+        resolve(postRequest('/refreshToken/' + store.getters.getRefreshToken))
+    })
+    promise.finally(() => {
+        promise = null
+    })
+    return promise
+}
+function setToken(res) {
+    return new Promise(resolve => {
+        store.commit('SET_TOKEN', res.data.accessToken)
+        store.commit('SET_REFRESH_TOKEN', res.data.refreshToken)
+        resolve(res)
+    })
+}
+
+// 相同消息每次（相邻只算一次）只提醒一次
+// var map = {429: '骚年，你的手速有点快哦！(￣.￣)...'}
+function globalMessage(status, msg) {
+    Message.error(msg)
+}
+
+function toLogin(routePath) {
+    if (routePath && routePath !== '/logins') {
+        router.replace('/logins?redirect=' + routePath)
+    } else {
+        router.replace('/logins')
+    }
 }
 export default request
