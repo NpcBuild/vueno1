@@ -199,7 +199,7 @@ export default {
   }
 }
 .content {
-  width: 320px;
+  min-width: 320px;
   margin-left: 5px;
 }
 /* 利用穿透，设置input边框隐藏 */

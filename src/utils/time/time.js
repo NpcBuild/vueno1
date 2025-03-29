@@ -63,3 +63,44 @@ Date.prototype.format = function(fmt) {
     }
     return fmt;
 }
+
+// 获取当月第一天是周几
+export function weekdayNum() {
+    let now = new Date();
+    let year = now.getFullYear();
+    let month = now.getMonth();
+    // 获取当月第一天是周几
+    let firstDay = new Date(year, month, 1);
+    let weekday = firstDay.getDay() ; // 0-6 => 0是周日，1是周一
+    let weekdayNum = weekday == 0 ? 7 : weekday; // 1-7
+    return weekdayNum;
+}
+
+// 获取当月天数
+export function daysInMonth() {
+    let now = new Date();
+    let year = now.getFullYear();
+    let month = now.getMonth();
+    let daysInMonth;
+    if (month === 3 || month === 5 || month === 8 || month === 10) {
+        daysInMonth = 30;
+    } else if (month === 1) {
+        if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
+            daysInMonth = 29;
+        } else {
+            daysInMonth = 28;
+        }
+    } else {
+        daysInMonth = 31;
+    }
+    return daysInMonth;
+}
+
+// 获取当月天数2
+export function daysInMonth2() {
+    let now = new Date();
+    let year = now.getFullYear();
+    let month = now.getMonth();
+    let nextMonth = new Date(year, month + 1, 1);
+    return (nextMonth - 1) / (1000 * 60 * 60 * 24);
+}

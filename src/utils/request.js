@@ -106,20 +106,20 @@ function getIpAddress(callback) {
         console.log('Stored IP address:', storedIpAddress);
         callback(storedIpAddress); // 使用回调传递IP地址
     } else {
-        fetch('https://api.ipify.org?format=json')
-            .then(response => response.json())
-            .then(data => {
-                const clientIpAddress = data.ip;
-                console.log('Fetched IP address:', clientIpAddress);
-                // fetch(process.env.VUE_APP_API_BASE_URL + '/vid?i=' + clientIpAddress).catch(error => {error})
-
-                // 将IP地址存储在 Vuex 中
-                store.dispatch('storeIpAddress', clientIpAddress);
-                callback(clientIpAddress); // 使用回调传递IP地址
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                callback(''); // 使用回调传递空IP地址或其他默认值
-            });
+        // fetch('https://api.ipify.org?format=json')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         const clientIpAddress = data.ip;
+        //         console.log('Fetched IP address:', clientIpAddress);
+        //         // fetch(process.env.VUE_APP_API_BASE_URL + '/vid?i=' + clientIpAddress).catch(error => {error})
+        //
+        //         // 将IP地址存储在 Vuex 中
+        //         store.dispatch('storeIpAddress', clientIpAddress);
+        //         callback(clientIpAddress); // 使用回调传递IP地址
+        //     })
+        //     .catch(error => {
+        //         console.error('Error:', error);
+        //         callback(''); // 使用回调传递空IP地址或其他默认值
+        //     });
     }
 }
