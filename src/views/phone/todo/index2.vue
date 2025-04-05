@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import {remainTime} from "@/utils/time/time.js";
 export default {
   data() {
     return {
@@ -115,17 +116,18 @@ export default {
           console.log(item)
           let obj = {
             id: item.id,
-            category: 0,
+            category: item.content,
             title: item.todoName,
             progress: 0,
             total: 0,
             subtasks: [],
-            deadline: 0,
+            deadline: item.endTime,
             swipeActive: 0,
-            remainingTime: 0,
+            remainingTime: '',
             offsetX: 0,
             startX: 0,
-            transition: "none"
+            transition: "none",
+            nextDueDate: item.nextDueDate
           }
           result.push(obj)
         })
@@ -140,9 +142,7 @@ export default {
     updateCountdown() {
       this.tasks.forEach(task => {
         if (task.deadline) {
-          // let diff = dayjs(task.deadline).diff(dayjs(), "days");
-          let diff = 4;
-          task.remainingTime = diff > 0 ? `剩余 ${diff} 天` : "已到期";
+          task.remainingTime = remainTime(task.nextDueDate);
         }
       });
     },

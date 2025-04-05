@@ -104,3 +104,29 @@ export function daysInMonth2() {
     let nextMonth = new Date(year, month + 1, 1);
     return (nextMonth - 1) / (1000 * 60 * 60 * 24);
 }
+
+// 剩余时间
+export function remainTime(endTime) {
+    let now = new Date();
+    let end = new Date(endTime);
+    const diffMs = end - now;
+
+    if (diffMs > 0) {
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+        const diffSeconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+        if (diffDays > 0) {
+            return `剩余 ${diffDays} 天`;
+        } else if (diffHours > 0) {
+            return `剩余 ${diffHours} 小时 ${diffMinutes} 分钟`;
+        } else if (diffMinutes > 0) {
+            return `剩余 ${diffMinutes} 分钟 ${diffSeconds} 秒`;
+        } else {
+            return `剩余 ${diffSeconds} 秒`;
+        }
+    } else {
+        return "已到期";
+    }
+}
