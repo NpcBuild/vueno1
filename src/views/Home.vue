@@ -283,6 +283,7 @@ export default {
   margin-left: 10%;
   margin-top: 20px;
   box-shadow: rgb(0, 67, 190) 1px 1px 5px;
+  overflow-y: scroll;
 }
 .toggler{
   position: absolute;

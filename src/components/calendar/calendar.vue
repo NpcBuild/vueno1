@@ -63,6 +63,7 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
+@use 'sass:color';
 html,
 body {
   width: 100%;
@@ -220,7 +221,7 @@ body {
     grid-row: 3;
     background: #fef0db;
     align-self: center;
-    color: darken(#fdb44d, 12%);
+    color: color.adjust(#fdb44d, $lightness: -12%);
     margin-top: -5px;
   }
 
@@ -231,7 +232,7 @@ body {
     margin-top: 15px;
     background: rgba(#fdc5d0, 0.7);
     align-self: end;
-    color: darken(#fa607e, 12%);
+    color: color.adjust(#fa607e, $lightness: -12%);
   }
 
   &--info {
@@ -241,7 +242,7 @@ body {
     margin-top: 15px;
     background: rgba(#dae7ff, 0.7);
     align-self: end;
-    color: darken(#4786ff, 12%);
+    color: color.adjust(#4786ff, $lightness: -12%);
   }
 
   &--primary {

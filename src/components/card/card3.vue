@@ -40,6 +40,7 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
+@use 'sass:color';
 $white: #FCFCFC;
 $gray: #CBCDD3;
 $dark: #777777;
@@ -86,11 +87,11 @@ h1 {
 }
 
 .green {
-  color: darken($secondary, 20%);
+  color: color.adjust($secondary, $lightness: -20%);
 }
 
 .red {
-  color: darken($error, 10%);
+  color: color.adjust($error, $lightness: -10%);
 }
 
 .alert {
@@ -102,7 +103,7 @@ p {
   margin-top: -5px;
   font-size: 0.5em;
   font-weight: 100;
-  color: darken($dark, 10%);
+  color: color.adjust($dark, $lightness: -10%);
   letter-spacing: 1px;
 }
 
@@ -141,7 +142,7 @@ button, .dot {
   top: 4%;
   right: 6%;
   &:hover {
-    background: darken($white, 20%);
+    background: color.adjust($white, $lightness: -20%);
   }
 }
 
@@ -253,7 +254,7 @@ button, .dot {
   box-shadow: 2px 2px 10px rgba($dark, .5);
   transition: all .5s ease-in-out;
   &:hover {
-    background: darken($white, 5%);
+    background: color.adjust($white, $lightness: -5%);
     transform: scale(1.05);
     transition: all .3s ease-in-out;
   }

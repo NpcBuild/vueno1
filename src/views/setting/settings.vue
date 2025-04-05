@@ -194,6 +194,7 @@ name: "settings",
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
+@use 'sass:color';
 // todo 移除js设置根元素的fong-size大小，改为替换样式中的rem为vw、vh、em
 $red: #EA6759;
 $yellow: #FFCC00;
@@ -202,7 +203,7 @@ $blue: #00a8ff;
 $purple: #9c88ff;
 
 @function dark($color) {
-  @return desaturate(darken($color, 15%), 30%);
+  @return color.scale(color.adjust($color, $lightness: -15%), $saturation: -30%);
 }
 
 $primary: $purple;
@@ -236,7 +237,7 @@ html, body {
   text-shadow: 0px 1px 1px $primary--dark;
 }
 
-/deep/ body, div, ul, li, ol, h1, h2, h3, h4, h5, h6, input, textarea, select, p, dl, dt, dd, a, img, button{
+::v-deep body, div, ul, li, ol, h1, h2, h3, h4, h5, h6, input, textarea, select, p, dl, dt, dd, a, img, button{
   font-size: 1.6rem;
 }
 

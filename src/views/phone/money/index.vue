@@ -1,9 +1,12 @@
 <template>
   <div class="billing-dashboard">
     <header class="header">📊 每月账单</header>
-    <LineChart :items="shouru" style="width: 95vw;height: 200px"></LineChart>
     <main class="charts-container">
-      <div class="chart-wrapper">
+      <div class="chart-wrapper"> 
+        <h2>支出趋势</h2>
+        <LineChart v-if="shouru && Object.keys(shouru).length > 0" :items="shouru" style="height: 400px;"></LineChart>
+      </div>
+      <!-- <div class="chart-wrapper">
         <h2>支出趋势</h2>
         <div class="chart-mode-toggle">
           <span class="mode-label" @click="toggleDropdown">{{ selectedExpenseLabel }}</span>
@@ -23,7 +26,7 @@
         <div class="chart-container">
           <canvas ref="barChartCanvas" class="chart-canvas"></canvas>
         </div>
-      </div>
+      </div> -->
     </main>
     <section class="bills-list">
       <div v-for="(bills, month) in monthlyBills" :key="month" class="month-section">
@@ -41,7 +44,7 @@
 </template>
 
 <script>
-import LineChart from "@/components/echarts/DefaultCharts/lineChart.vue";
+import LineChart from "./lineChart.vue";
 
 export default {
   name: "index",
@@ -58,7 +61,7 @@ export default {
         { label: '按周', value: 'weekly' },
         { label: '按月', value: 'monthly' }
       ],
-      shouru: [],
+      shouru: {},
       zhichu: [],
       expenseData: {
         daily: [[120, 80, 100, 90, 150, 170, 200], [100, 60, 80, 70, 140, 160, 190]],
@@ -75,8 +78,8 @@ export default {
     }
   },
   mounted() {
-    this.drawLineChart();
-    this.drawBarChart();
+    // this.drawLineChart();
+    // this.drawBarChart();
   },
   methods: {
     toggleDropdown() {
@@ -91,12 +94,12 @@ export default {
           monthlyBills.push(-(res.data[key]['收入'] || 0))
           monthlyBillsMoney.push(res.data[key]['餐饮'] || 0)
         }
-        this.drawLineChart([monthlyBillsMoney]);
+        // this.drawLineChart([monthlyBillsMoney]);
         console.log(monthlyBills)
         console.log(monthlyBillsMoney)
-        this.shouru = monthlyBills
+        this.shouru = res.data
         this.zhichu = [monthlyBillsMoney]
-        this.drawBarChart(monthlyBills);
+        // this.drawBarChart(monthlyBills);
       })
       this.getRequest('/money/getMoneyList', {pageSize: 100}).then(res => {
         let result = {}
@@ -115,11 +118,11 @@ export default {
         this.monthlyBills = result
       })
     },
-    changeExpenseMode(mode) {
-      this.selectedExpenseMode = mode;
-      this.showDropdown = false;
-      this.drawLineChart();
-    },
+    // changeExpenseMode(mode) {
+    //   this.selectedExpenseMode = mode;
+    //   this.showDropdown = false;
+    //   this.drawLineChart();
+    // },
     showDataPoint(event) {
       const canvas = this.$refs.lineChartCanvas;
       const rect = canvas.getBoundingClientRect();
@@ -134,83 +137,83 @@ export default {
         value: `¥${tooltipValue}`
       };
     },
-    drawLineChart(data) {
-      const canvas = this.$refs.lineChartCanvas;
-      const ctx = canvas.getContext('2d');
-      const datasets = data ? data : this.expenseData[this.selectedExpenseMode];
-      canvas.width = 400;
-      canvas.height = 200;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const colors = ['#0077ff', '#ff7700'];
-      datasets.forEach((data, i) => {
-        ctx.strokeStyle = colors[i % colors.length];
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        data.forEach((value, index) => {
-          const x = 40 + index * (360 / (data.length - 1));
-          const y = 180 - (value / Math.max(...data)) * 160;
-          if (index === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        });
-        ctx.stroke();
-      });
-    },
-    drawBarChart(data) {
-      const canvas = this.$refs.barChartCanvas;
-      const ctx = canvas.getContext('2d');
+    // drawLineChart(data) {
+    //   const canvas = this.$refs.lineChartCanvas;
+    //   const ctx = canvas.getContext('2d');
+    //   const datasets = data ? data : this.expenseData[this.selectedExpenseMode];
+    //   canvas.width = 400;
+    //   canvas.height = 200;
+    //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //   const colors = ['#0077ff', '#ff7700'];
+    //   datasets.forEach((data, i) => {
+    //     ctx.strokeStyle = colors[i % colors.length];
+    //     ctx.lineWidth = 3;
+    //     ctx.beginPath();
+    //     data.forEach((value, index) => {
+    //       const x = 40 + index * (360 / (data.length - 1));
+    //       const y = 180 - (value / Math.max(...data)) * 160;
+    //       if (index === 0) ctx.moveTo(x, y);
+    //       else ctx.lineTo(x, y);
+    //     });
+    //     ctx.stroke();
+    //   });
+    // },
+    // drawBarChart(data) {
+    //   const canvas = this.$refs.barChartCanvas;
+    //   const ctx = canvas.getContext('2d');
 
-      // 让 Canvas 适应父容器
-      const parentWidth = canvas.parentElement.clientWidth || 400;
-      const parentHeight = canvas.parentElement.clientHeight || 300;
-      canvas.width = parentWidth;
-      canvas.height = parentHeight;
+    //   // 让 Canvas 适应父容器
+    //   const parentWidth = canvas.parentElement.clientWidth || 400;
+    //   const parentHeight = canvas.parentElement.clientHeight || 300;
+    //   canvas.width = parentWidth;
+    //   canvas.height = parentHeight;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // **调整间距，优化视觉**
-      const paddingTop = 20; // 顶部预留空间
-      const paddingBottom = 20; // 底部预留空间
-      const paddingLeft = 20; // 左侧预留空间
-      const paddingRight = 20; // 右侧预留空间
+    //   // **调整间距，优化视觉**
+    //   const paddingTop = 20; // 顶部预留空间
+    //   const paddingBottom = 20; // 底部预留空间
+    //   const paddingLeft = 20; // 左侧预留空间
+    //   const paddingRight = 20; // 右侧预留空间
 
-      const chartWidth = canvas.width - paddingLeft - paddingRight;
-      const chartHeight = canvas.height - paddingTop - paddingBottom;
+    //   const chartWidth = canvas.width - paddingLeft - paddingRight;
+    //   const chartHeight = canvas.height - paddingTop - paddingBottom;
 
-      // **计算柱状图缩放比例**
-      const barData = data || [];
-      const maxDataValue = Math.max(...barData, 1); // 避免除 0
-      const normalizedData = barData.map(h => (h / maxDataValue) * chartHeight);
+    //   // **计算柱状图缩放比例**
+    //   const barData = data || [];
+    //   const maxDataValue = Math.max(...barData, 1); // 避免除 0
+    //   const normalizedData = barData.map(h => (h / maxDataValue) * chartHeight);
 
-      // **计算柱子宽度和间距**
-      const barWidth = Math.min(40, chartWidth / (barData.length * 2)); // 柱子宽度自适应
-      const gap = (chartWidth - barData.length * barWidth) / (barData.length + 1); // 计算间距
+    //   // **计算柱子宽度和间距**
+    //   const barWidth = Math.min(40, chartWidth / (barData.length * 2)); // 柱子宽度自适应
+    //   const gap = (chartWidth - barData.length * barWidth) / (barData.length + 1); // 计算间距
 
-      // **动画绘制柱状图**
-      let frame = 0;
-      const totalFrames = 20;
+    //   // **动画绘制柱状图**
+    //   let frame = 0;
+    //   const totalFrames = 20;
 
-      function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //   function animate() {
+    //     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = '#0077ff';
+    //     ctx.fillStyle = '#0077ff';
 
-        barData.forEach((value, index) => {
-          const x = paddingLeft + gap + index * (barWidth + gap);
-          const targetHeight = normalizedData[index];
-          const currentHeight = (targetHeight * frame) / totalFrames;
-          const y = canvas.height - paddingBottom - currentHeight;
+    //     barData.forEach((value, index) => {
+    //       const x = paddingLeft + gap + index * (barWidth + gap);
+    //       const targetHeight = normalizedData[index];
+    //       const currentHeight = (targetHeight * frame) / totalFrames;
+    //       const y = canvas.height - paddingBottom - currentHeight;
 
-          ctx.fillRect(x, y, barWidth, currentHeight);
-        });
+    //       ctx.fillRect(x, y, barWidth, currentHeight);
+    //     });
 
-        if (frame < totalFrames) {
-          frame++;
-          requestAnimationFrame(animate);
-        }
-      }
+    //     if (frame < totalFrames) {
+    //       frame++;
+    //       requestAnimationFrame(animate);
+    //     }
+    //   }
 
-      animate();
-    }
+    //   animate();
+    // }
 
   }
 };

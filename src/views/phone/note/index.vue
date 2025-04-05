@@ -50,6 +50,7 @@
 </template>
 
 <script>
+
 export default {
   data() {
     return {
@@ -81,7 +82,16 @@ export default {
       }
     };
   },
+  created() {
+    this.initData();
+  },
   methods: {
+    initData() {
+      // 初始化数据
+      this.postRequest('/diary/getDiaryByDate',{date: '2025-04-02'}).then(res => {
+        console.log(res.data)
+      })
+    },
     saveDiary() {
       this.pastDiaries.unshift({ date: new Date().toISOString().slice(0, 10), text: this.todayDiary.text, mood: this.todayDiary.mood });
       this.todayDiary.text = "";

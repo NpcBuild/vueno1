@@ -341,25 +341,20 @@ div.scrollable {
     transform: translateY(-100%);
   }
 }
-/*li.active {*/
-/*  animation: none; !* 移除滚动动画 *!*/
-/*}*/
-
-/deep/ .el-calendar-table__row{
-  height: 13vh;
-}
-
-/deep/ .el-calendar-table .el-calendar-day {
+// li.active {
+//  animation: none; // 移除滚动动画
+// }
+::v-deep .el-calendar-table .el-calendar-day {
   /*padding: 0px;*/
   height: 100%;
 }
 
-///deep/.el-calendar__body {
+//::v-deep.el-calendar__body {
 //  height: 1000px;
 //}
 
 /*FIXEME：修复日历会多最后一行的问题，但有时候会少一行*/
-.hide-last-row /deep/.el-calendar__body tr:last-child {
+.hide-last-row ::v-deep.el-calendar__body tr:last-child {
  display: none;
 }
 

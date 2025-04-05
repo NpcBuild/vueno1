@@ -39,6 +39,7 @@ const video2 = r => require.ensure([], () => r(require('@/components/videoPlayer
 const dailyPlan = r => require.ensure([], () => r(require('@/views/todo/dailyPlan.vue')), 'dailyPlan');
 const mandalaPlan = r => require.ensure([], () => r(require('@/views/todo/mandalaPlan.vue')), 'mandalaPlan');
 const china = r => require.ensure([], () => r(require('@/components/echarts/China.vue')), 'china');
+const chinaMap = r => require.ensure([], () => r(require('@/components/echarts/map.vue')), 'chinaMap');
 const test3 = r => require.ensure([], () => r(require('@/components/emoji/smileyPreloader.vue')), 'test3');
 const test4 = r => require.ensure([], () => r(require('@/components/videoPlayer/videoTest.vue')), 'test4');
 const emoji1 = r => require.ensure([], () => r(require('@/components/emoji/emotingEyes.vue')), 'emoji1');
@@ -184,6 +185,11 @@ const routes = [
         //         component: china
         //     },
         // ]
+    },
+    {
+        path: '/chinaMap',
+        name: 'chinaMap',
+        component: chinaMap
     },
     {
         path: '/loading',
@@ -344,6 +350,11 @@ const routes = [
                 path: 'note',
                 name: 'note',
                 component: () => import('@/views/phone/note/index.vue'),
+            },
+            {
+                path: 'note2',
+                name: 'note2',
+                component: () => import('@/views/phone/note/index2.vue'),
             },
             {
                 path: 'points',

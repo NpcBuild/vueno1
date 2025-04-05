@@ -330,6 +330,7 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
+@use 'sass:color';
 @import url(https://fonts.googleapis.com/css?family=Lato:400,700);
 
 $green: #86BB71;
@@ -457,7 +458,7 @@ $gray: #92959E;
     }
 
     .message-data-time {
-      color: lighten($gray, 8%);
+      color: color.adjust($gray, $lightness: 8%);
       padding-left: 6px;
     }
 
@@ -533,7 +534,7 @@ $gray: #92959E;
       background: #F2F5F8;
 
       &:hover {
-        color: darken($blue, 7%);
+        color: color.adjust($blue, $lightness: -7%);
       }
     }
   }
